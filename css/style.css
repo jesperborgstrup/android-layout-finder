@@ -1,0 +1,65 @@
+h5.menu_header {
+	background: #606060;
+	color: white;
+	border-radius: 10px 10px 0px 0px;
+	padding-left: 10px;
+	padding-top: 5px;
+	padding-bottom: 5px;
+	margin-bottom: 0px;
+	margin-top: 0px;
+	padding-right: 20px;
+}
+
+div.menu_fragment {
+	background: #f0f0f0;
+	border-radius: 0px 0px 10px 10px;
+	padding-left: 10px;
+	padding-top: 15px;
+	padding-bottom: 10px;
+	margin-bottom: 40px;
+	padding-right: 20px;
+}
+
+#main {
+	
+}
+
+#main div .alert {
+	border-radius: 0px 0px 10px 10px;
+}
+
+textarea {
+	font-family: Consolas, Monaco, Lucida Console, Liberation Mono,
+		DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace;
+	font-size: 10pt;
+	border-radius: 0px 0px 10px 10px;
+}
+
+h3.three_header {
+	background: #606060;
+	color: #FFFFFF;
+	border-radius: 10px 10px 0px 0px;
+	margin-bottom: 0px;
+	margin-top: 30px;
+	padding-left: 5px;
+	padding-right: 5px;
+	vertical-align: center;
+}
+
+p.three_header_tip {
+	background: #606060;
+	color: #FFFFFF;
+	margin-bottom: 0px;
+	margin-top: 0px;
+	padding: 5px;
+}
+
+h3.three_header_first {
+	margin-top: 0px;
+}
+
+h3.three_header button {
+	margin-top: 5px;
+	float: right;
+	margin-right: 10px;
+}
