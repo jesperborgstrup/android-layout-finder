@@ -62,8 +62,8 @@ function generateTreeFromInput() {
 		rootElement = recursiveParseXmlElement( root, 0 );
 	}
 	catch (err) {
-		$('#tree_alert').html('<div class="alert alert-error"><span>'+err.message+'</span></div>');
-		$('#code_alert').html('<div class="alert alert-error"><span>'+err.message+'</span></div>');
+		$('#tree_alert').html('<div class="alert alert-error"><span>Error parsing XML</span></div>');
+		$('#code_alert').html('<div class="alert alert-error"><span>Error parsing XML</span></div>');
 		$('#tree').html('');
 		$('#output').hide();
 		return;
