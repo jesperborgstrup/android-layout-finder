@@ -1,3 +1,19 @@
+/*
+ * Copyright 2013 Jesper Borgstrup
+ *
+ * This file is part of Android Layout Finder.
+ * 
+ * Android Layout Finder is free software: you can redistribute it and/or modify it under 
+ * the terms of the GNU General Public License as published by the Free Software Foundation, 
+ * either version 3 of the License, or (at your option) any later version.
+ * 
+ * Android Layout Finder is distributed in the hope that it will be useful, 
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * See http://www.gnu.org/licenses/ for the full license text
+ */
+
 var images = ["AbsoluteLayout","AdapterViewFlipper","AnalogClock","AutoCompleteTextView","Button","CalendarView","CheckBox","CheckedTextView","Chronometer","DatePicker","DialerFilter","DigitalClock","EditText","ExpandableListView","FrameLayout","Gallery","GestureOverlayView","GridLayout","GridView","HorizontalScrollView","ImageButton","ImageSwitcher","ImageView","LinearLayout","MediaController","MultiAutoCompleteTextView","NumberPicker","ProgressBar","QuickContactBadge","RadioButton","RadioGroup","RatingBar","RelativeLayout","ScrollView","SearchView","SeekBar","SlidingDrawer","Space","Spinner","StackView","SurfaceView","Switch","TabHost","TableLayout","TableRow","TabWidget","TextSwitcher","TextureView","TextView","TimePicker","ToggleButton","TwoLineListItem","VerticalLinearLayout","ViewAnimator","ViewFlipper","ViewStub","ViewSwitcher","WebView","ZoomButton","ZoomControls"];
 
 function sampleData() {
@@ -68,7 +84,7 @@ function generateJavaFromTree() {
 	var result = "";
 	for ( var i = 0; i < selected.length; i++ ) {
 		var node = selected[i];
-		result += "\tprivate " + node.className + " " + node.id + ";\n"
+		result += "\tprivate " + node.className + " " + node.id + ";\n";
 	}
 	
 	var parentview = $("#chk_parentview").is(":checked") ? $("#edt_parentview").val() : "";
@@ -78,10 +94,10 @@ function generateJavaFromTree() {
 	for ( var i = 0; i < selected.length; i++ ) {
 		var node = selected[i];
 		if ( node.type == "view" ) {
-			result += "\t\t" + node.id + " = ("+node.className+")"+ parentview_dot + "findViewById( R.id."+node.id+");\n"
+			result += "\t\t" + node.id + " = ("+node.className+")"+ parentview_dot + "findViewById( R.id."+node.id+");\n";
 		} else if ( node.type == "fragment") {
 			var fragmentMan = $("#chk_support").is(":checked") ? "getSuppportFragmentManager()" : "getFragmentManager()";
-			result += "\t\t" + node.id + " = ("+node.className+")" + fragmentMan + ".findFragmentById( R.id."+node.id+");\n"
+			result += "\t\t" + node.id + " = ("+node.className+")" + fragmentMan + ".findFragmentById( R.id."+node.id+");\n";
 		}
 	}
 	
@@ -143,7 +159,7 @@ $(document).ready(function() {
 	});
 	$("#chk_support").change(function() {
 		generateJavaFromTree();
-	})
+	});
 	$("#chk_parentview").change(function() {
 		generateJavaFromTree();
 	});
@@ -209,7 +225,7 @@ Element.prototype.toString = function() {
 	}
 	result += "</" + this.name + ">";
 	return result;
-}
+};
 
 function recursiveParseXmlElement( xml_el ) {
 	var children = [];
@@ -243,7 +259,7 @@ function prepareForTree( el ) {
  	if ( el['className'] == "fragment" ) {
  		icon = "fragment";
  	}
-	el[ "title" ] = (hasId ? el['id'] + " " : "") + "<i>" + el['className'] + "</i>"
+	el[ "title" ] = (hasId ? el['id'] + " " : "") + "<i>" + el['className'] + "</i>";
 	el[ "icon" ] = "view-icons/" + icon + ".png";
 	el[ "unselectable" ] = !hasId;
 	el[ "select" ] = hasId;
