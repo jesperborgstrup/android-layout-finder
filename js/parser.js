@@ -119,13 +119,13 @@ function generateJavaFromTreeMv(selected) {
 }
 
 function generateJavaFromTreeVh(selected) {
-	var result = "\tprivate static class ViewHolder {\n";
+	var result = "private static class ViewHolder {\n";
 	for ( var i = 0; i < selected.length; i++ ) {
 		var node = selected[i];
-		result += "\t\tpublic final " + node.className + " " + node.id + ";\n";
+		result += "\tpublic final " + node.className + " " + node.id + ";\n";
 	}
 	result += "\n";
-	result += "\t\tpublic ViewHolder(";
+	result += "\tpublic ViewHolder(";
 	for ( var i = 0; i < selected.length; i++ ) {
 		var node = selected[i];
 		result += node.className + " " + node.id;
@@ -136,16 +136,15 @@ function generateJavaFromTreeVh(selected) {
 	result += ") {\n";
 	for ( var i = 0; i < selected.length; i++ ) {
 		var node = selected[i];
-		result += "\t\t\tthis." + node.id + " = " + node.id + ";\n";
+		result += "\t\tthis." + node.id + " = " + node.id + ";\n";
 	}
 	
-	result += "\t\t}\n";
 	result += "\t}\n";
 	
 	var parentview = $("#edt_parentview").val() != "" ? $("#edt_parentview").val() : "rootView";
 	var parentview_dot = parentview == "" ? "" : parentview+".";
 	result += "\n";
-	result += "\tprivate ViewHolder createViewHolder(View "+parentview+") {\n";
+	result += "\tpublic static ViewHolder create(View "+parentview+") {\n";
 	for ( var i = 0; i < selected.length; i++ ) {
 		var node = selected[i];
 		result += "\t\t" + node.className + " " + node.id + " = (" + node.className + ")" + getFindViewCode( parentview_dot, node ) + ";\n";
@@ -161,8 +160,9 @@ function generateJavaFromTreeVh(selected) {
 	}
 	result += " );\n";
 	
-	
 	result += "\t}\n";
+	
+	result += "}\n";
 	
 	$("#output").text( result );
 } 
