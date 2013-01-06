@@ -81,6 +81,17 @@ function generateJavaFromTree() {
 		$("#output").val('');
 	}
 	
+	if ( $("#radio_codetype_mv").is(":checked") ) {
+		// Member variables
+		generateJavaFromTreeMv(selected);
+	} else if ( $("#radio_codetype_vh").is(":checked") ) {
+		// ViewHolder pattern
+		generateJavaFromTreeVh(selected);
+	}
+	
+}
+
+function generateJavaFromTreeMv(selected) {
 	var result = "";
 	for ( var i = 0; i < selected.length; i++ ) {
 		var node = selected[i];
@@ -93,17 +104,70 @@ function generateJavaFromTree() {
 	result += "\tprivate void initializeViews() {\n";
 	for ( var i = 0; i < selected.length; i++ ) {
 		var node = selected[i];
-		if ( node.type == "view" ) {
-			result += "\t\t" + node.id + " = ("+node.className+")"+ parentview_dot + "findViewById( R.id."+node.id+");\n";
-		} else if ( node.type == "fragment") {
-			var fragmentMan = $("#chk_support").is(":checked") ? "getSupportFragmentManager()" : "getFragmentManager()";
-			result += "\t\t" + node.id + " = ("+node.className+")" + fragmentMan + ".findFragmentById( R.id."+node.id+");\n";
-		}
+		result += "\t\t" + node.id + " = (" + node.className + ")" + getFindViewCode( parentview_dot, node ) + ";\n";
 	}
 	
 	result += "\t}\n";
 	
 	$("#output").text( result );
+}
+
+function generateJavaFromTreeVh(selected) {
+	var result = "\tprivate static class ViewHolder {\n";
+	for ( var i = 0; i < selected.length; i++ ) {
+		var node = selected[i];
+		result += "\t\tpublic final " + node.className + " " + node.id + ";\n";
+	}
+	result += "\n";
+	result += "\t\tpublic ViewHolder(";
+	for ( var i = 0; i < selected.length; i++ ) {
+		var node = selected[i];
+		result += node.className + " " + node.id;
+		if ( i < selected.length - 1 ) {
+			result += ", ";
+		}
+	}
+	result += ") {\n";
+	for ( var i = 0; i < selected.length; i++ ) {
+		var node = selected[i];
+		result += "\t\t\tthis." + node.id + " = " + node.id + ";\n";
+	}
+	
+	result += "\t\t}\n";
+	result += "\t}\n";
+	
+	var parentview = $("#edt_parentview").val() != "" ? $("#edt_parentview").val() : "rootView";
+	var parentview_dot = parentview == "" ? "" : parentview+".";
+	result += "\n";
+	result += "\tprivate ViewHolder createViewHolder(View "+parentview+") {\n";
+	for ( var i = 0; i < selected.length; i++ ) {
+		var node = selected[i];
+		result += "\t\t" + node.className + " " + node.id + " = (" + node.className + ")" + getFindViewCode( parentview_dot, node ) + ";\n";
+	}		
+	
+	result += "\t\treturn new ViewHolder( ";
+	for ( var i = 0; i < selected.length; i++ ) {
+		var node = selected[i];
+		result += node.id;
+		if ( i < selected.length - 1 ) {
+			result += ", ";
+		}
+	}
+	result += " );\n";
+	
+	
+	result += "\t}\n";
+	
+	$("#output").text( result );
+} 
+
+function getFindViewCode( parentview_dot, node ) {
+	if ( node.type == "view" ) {
+		return parentview_dot + "findViewById( R.id."+node.id+" )";
+	} else if ( node.type == "fragment") {
+		var fragmentMan = $("#chk_support").is(":checked") ? "getSupportFragmentManager()" : "getFragmentManager()";
+		result += fragmentMan + ".findFragmentById( R.id."+node.id+" )";
+	}
 }
 
 function getSelectedTreeNodes( root ) {
@@ -242,17 +306,23 @@ $(document).ready(function() {
 	$("#output").click(function() {
 		SelectText("output");
 	});
-	$("#chk_support").change(function() {
-		generateJavaFromTree();
-	});
 	$("#help_support").css('cursor','pointer').click(function() {
 		alert("If this is checked, the FragmentManager is retrieved with getSupportFragmentManager() instead of getFragmentManager().");
+	});
+	$("#help_parentview").css('cursor','pointer').click(function() {
+		alert("Enter a Java variable name here to redirect all findViewById() method calls to that variable.");
+	});
+	$("#chk_support").change(function() {
+		generateJavaFromTree();
 	});
 	$("#edt_parentview").bind("keyup paste", function(e){
 		generateJavaFromTree();
 	});
-	$("#help_parentview").css('cursor','pointer').click(function() {
-		alert("Enter a Java variable name here to redirect all findViewById() method calls to that variable.");
+	$("#radio_codetype_mv").change(function() {
+		generateJavaFromTree();
+	});
+	$("#radio_codetype_vh").change(function() {
+		generateJavaFromTree();
 	});
 //	$(document).on('dragenter',function(event){
 //		event.preventDefault();
