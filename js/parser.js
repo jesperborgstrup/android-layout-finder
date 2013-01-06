@@ -207,6 +207,9 @@ function recursiveParseXmlElement( xml_el ) {
 	var children = [];
  	for ( var i = 0; i < xml_el.children().length; i++ ) {
  		child = xml_el.children().eq(i);
+ 		if ( child.prop( "tagName" ) == "requestFocus" ){
+ 			continue;
+ 		}
 		children.push( recursiveParseXmlElement( child ) );
 	}
  	var tagName = xml_el.prop( "tagName" );
@@ -235,7 +238,12 @@ function prepareForTree( el ) {
  	if ( el['className'] == "fragment" ) {
  		icon = "fragment";
  	}
-	el[ "title" ] = (hasId ? el['id'] + " " : "(No id) ") + "<i>" + el['className'] + "</i>";
+ 	if ( hasId ) {
+ 		el[ "title" ] = el['id'] + " <i>" + el['className'] + "</i>";
+ 	} else {
+ 		el[ "title" ] = "<span style='color: #A0A0A0'>(No id) <i>" + el['className'] + "</i></span>";
+ 		
+ 	}
 	el[ "icon" ] = "view-icons/" + icon + ".png";
 	el[ "unselectable" ] = !hasId;
 	el[ "select" ] = hasId;
