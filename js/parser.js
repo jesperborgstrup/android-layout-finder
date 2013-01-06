@@ -96,7 +96,7 @@ function generateJavaFromTree() {
 		if ( node.type == "view" ) {
 			result += "\t\t" + node.id + " = ("+node.className+")"+ parentview_dot + "findViewById( R.id."+node.id+");\n";
 		} else if ( node.type == "fragment") {
-			var fragmentMan = $("#chk_support").is(":checked") ? "getSuppportFragmentManager()" : "getFragmentManager()";
+			var fragmentMan = $("#chk_support").is(":checked") ? "getSupportFragmentManager()" : "getFragmentManager()";
 			result += "\t\t" + node.id + " = ("+node.className+")" + fragmentMan + ".findFragmentById( R.id."+node.id+");\n";
 		}
 	}
