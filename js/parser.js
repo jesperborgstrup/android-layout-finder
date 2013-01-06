@@ -79,9 +79,14 @@ function generateJavaFromTree() {
 	var selected = getSelectedTreeNodes( root );
 	
 	if ( selected.length == 0 ) {
-		$("#output").val('');
+		$('#code_alert').html('<div class="alert alert-info"><span>Select at least one view in the tree above to generate code for</span></div>');
+		$("#output").hide('');
+		return;
 	}
-	
+
+	$('#code_alert').html('');
+	$("#output").show();
+
 	if ( $("#radio_codetype_mv").is(":checked") ) {
 		// Member variables
 		generateJavaFromTreeMv(selected);
