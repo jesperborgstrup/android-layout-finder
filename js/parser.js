@@ -54,6 +54,7 @@ function generateTreeFromInput() {
 	var tree = prepareForTree( rootElement );
 	
 	$("#tree").dynatree({
+		minExpandLevel: 1000,
 		persist: true,
 		checkbox: true,
 		selectMode: 2,
@@ -63,7 +64,7 @@ function generateTreeFromInput() {
 			generateJavaFromTree();
 		},
  		onActivate: function(node) {
- 			node.select();
+ 			node.select( !node.isSelected() );
 		}
 	});
 	$("#tree").dynatree("getTree").reload();
@@ -229,7 +230,7 @@ function prepareForTree( el ) {
  	if ( el['className'] == "fragment" ) {
  		icon = "fragment";
  	}
-	el[ "title" ] = (hasId ? el['id'] + " " : "") + "<i>" + el['className'] + "</i>";
+	el[ "title" ] = (hasId ? el['id'] + " " : "(No id) ") + "<i>" + el['className'] + "</i>";
 	el[ "icon" ] = "view-icons/" + icon + ".png";
 	el[ "unselectable" ] = !hasId;
 	el[ "select" ] = hasId;
