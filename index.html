@@ -69,7 +69,7 @@
 						entire text</p>
 					<div id="code_alert"></div>
 					<pre id="output"></pre>
-<!-- 					<textarea rows="10" id="output" class="input-block-level"></textarea> -->
+					<!-- 					<textarea rows="10" id="output" class="input-block-level"></textarea> -->
 				</div>
 			</div>
 			<div class="span4" id="menu">
@@ -79,15 +79,16 @@
 				</div>
 				<h5 class="menu_header">Code output settings</h5>
 				<div class="menu_fragment">
-					<label class="checkbox"> <input type="checkbox"
-						id="chk_support" /> Use support package
-					</label> <label class="checkbox"> <input type="checkbox"
-						id="chk_parentview" /> Use custom view root:
-					</label>
-					<div style="margin-left: 20px">
-						<input type="text" id="edt_parentview" class="input-block-level"
-							placeholder="Custom view root variable">
-					</div>
+					<form class="form-inline">
+						<label class="checkbox"> <input type="checkbox"
+							id="chk_support" /> Use support package
+						</label> <img src="img/icon-help.png" style="margin-left: 5px" id="help_support"/>
+					</form>
+					<form class="form-inline">
+						<input type="text" id="edt_parentview" class="input-large"
+							placeholder="Custom view root variable"><img
+							style="margin-left: 10px" src="img/icon-help.png" id="help_parentview" />
+					</form>
 				</div>
 				<h5 class="menu_header">Share this</h5>
 				<div class="menu_fragment">
@@ -107,9 +108,10 @@
 					Using <a href="http://jquery.com">jQuery</a>, <a
 					href="http://code.google.com/p/dynatree/">Dynatree</a> and <a
 					href="http://twitter.github.com/bootstrap/index.html">Twitter
-						Bootstrap</a>.<br />
-						Android Layout Finder is licensed under the <a href="http://www.gnu.org/licenses/">GNU General Public License</a>
-						and the source code is available at <a href="https://github.com/jesperborgstrup/android-layout-finder">GitHub</a>.
+						Bootstrap</a>.<br /> Android Layout Finder is licensed under the <a
+					href="http://www.gnu.org/licenses/">GNU General Public License</a>
+					and the source code is available at <a
+					href="https://github.com/jesperborgstrup/android-layout-finder">GitHub</a>.
 				</small>
 			</div>
 		</div>

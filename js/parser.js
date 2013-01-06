@@ -87,7 +87,7 @@ function generateJavaFromTree() {
 		result += "\tprivate " + node.className + " " + node.id + ";\n";
 	}
 	
-	var parentview = $("#chk_parentview").is(":checked") ? $("#edt_parentview").val() : "";
+	var parentview = $("#edt_parentview").val();
 	var parentview_dot = parentview == "" ? "" : parentview+".";
 	result += "\n";
 	result += "\tprivate void initializeViews() {\n";
@@ -117,100 +117,6 @@ function getSelectedTreeNodes( root ) {
 	}
 	return result;
 }
-
-$(document).ready(function() {
-	//	sampleData();
-	generateTreeFromInput();
-	$("#button_parse").click(function() {
-		generateTreeFromInput();
-	});
-//	$("#button_copy_java").click(function() {
-//		alert("BLAH");
-//	})
-	$("#button_copy_java").zclip({
-	    path: "js/ZeroClipboard.swf",
-	    copy: function(){
-	    	alert("copied to clipboard");
-	    	return $("#output").val();
-	    }
-	});
-	$("#button_generate").click(function() {
-		generateJavaFromTree();
-	});
-	$("#button_example").click(function() {
-		sampleData();
-	});
-	$("#xml_input").bind("keyup paste", function(e){
-		generateTreeFromInput();
-	});
-	$("#xml_input").focus(function() {
-	    var $this = $(this);
-	    $this.select();
-
-	    // Work around Chrome's little problem
-	    $this.mouseup(function() {
-	        // Prevent further mouseup intervention
-	        $this.unbind("mouseup");
-	        return false;
-	    });
-	});
-	$("#output").click(function() {
-		SelectText("output");
-	});
-	$("#chk_support").change(function() {
-		generateJavaFromTree();
-	});
-	$("#chk_parentview").change(function() {
-		generateJavaFromTree();
-	});
-	$("#edt_parentview").bind("keyup paste", function(e){
-		var view = $("#edt_parentview").val();
-		if ( view == '' ) {
-			$("#chk_parentview").removeAttr( "checked" );
-		}
-		if ( view != '' ) {
-			$("#chk_parentview").attr('checked', 'checked');
-		}
-		generateJavaFromTree();
-	});
-	$(document).on('dragenter',function(event){
-		event.preventDefault();
-		$(document).cursor( 'not-allowed' );
-		$("*:visible").fadeTo( 500, 50 );
-		$('#xml_input').fadeTo( 500, 100 );
-	});
-	$(document).on('dragleave',function(event){
-		event.preventDefault();
-		$(document).cursor( 'auto' );
-		$("*:visible").fadeTo( 500, 50 );
-	});
-	$(document).on('dragover',function(event){
-		event.preventDefault();
-	});
-	$('#xml_input').on('dragover', function(event) {
-				
-	});
-	$('#xml_input').on('drop', function(event) {
-
-		 //stop the browser from opening the file
-		 event.preventDefault();
-
-		 //Now we need to get the files that were dropped
-		 //The normal method would be to use event.dataTransfer.files
-		 //but as jquery creates its own event object you ave to access 
-		 //the browser even through originalEvent.  which looks like this
-		 var files = event.originalEvent.dataTransfer.files;
-
-		 //Use FormData to send the files
-		 var formData = new FormData();
-
-		 //append the files to the formData object
-		 //if you are using multiple attribute you would loop through 
-		 //but for this example i will skip that
-		 formData.append('files', files[0]);
-
-		 });
-});
 
 function Element(name, id, children) {
 	this.name = name;
@@ -296,3 +202,94 @@ function SelectText(element) {
         selection.addRange(range);
     }
 }
+
+$(document).ready(function() {
+	//	sampleData();
+	generateTreeFromInput();
+	$("#button_parse").click(function() {
+		generateTreeFromInput();
+	});
+//	$("#button_copy_java").click(function() {
+//		alert("BLAH");
+//	})
+//	$("#button_copy_java").zclip({
+//	    path: "js/ZeroClipboard.swf",
+//	    copy: function(){
+//	    	alert("copied to clipboard");
+//	    	return $("#output").val();
+//	    }
+//	});
+	$("#button_generate").click(function() {
+		generateJavaFromTree();
+	});
+	$("#button_example").click(function() {
+		sampleData();
+	});
+	$("#xml_input").bind("keyup paste", function(e){
+		generateTreeFromInput();
+	});
+	$("#xml_input").focus(function() {
+	    var $this = $(this);
+	    $this.select();
+
+	    // Work around Chrome's little problem
+	    $this.mouseup(function() {
+	        // Prevent further mouseup intervention
+	        $this.unbind("mouseup");
+	        return false;
+	    });
+	});
+	$("#output").click(function() {
+		SelectText("output");
+	});
+	$("#chk_support").change(function() {
+		generateJavaFromTree();
+	});
+	$("#help_support").css('cursor','pointer').click(function() {
+		alert("If this is checked, the FragmentManager is retrieved with getSupportFragmentManager() instead of getFragmentManager().");
+	});
+	$("#edt_parentview").bind("keyup paste", function(e){
+		generateJavaFromTree();
+	});
+	$("#help_parentview").css('cursor','pointer').click(function() {
+		alert("Enter a Java variable name here to redirect all findViewById() method calls to that variable.");
+	});
+//	$(document).on('dragenter',function(event){
+//		event.preventDefault();
+//		$(document).cursor( 'not-allowed' );
+//		$("*:visible").fadeTo( 500, 50 );
+//		$('#xml_input').fadeTo( 500, 100 );
+//	});
+//	$(document).on('dragleave',function(event){
+//		event.preventDefault();
+//		$(document).cursor( 'auto' );
+//		$("*:visible").fadeTo( 500, 50 );
+//	});
+//	$(document).on('dragover',function(event){
+//		event.preventDefault();
+//	});
+//	$('#xml_input').on('dragover', function(event) {
+//				
+//	});
+//	$('#xml_input').on('drop', function(event) {
+//
+//		 //stop the browser from opening the file
+//		 event.preventDefault();
+//
+//		 //Now we need to get the files that were dropped
+//		 //The normal method would be to use event.dataTransfer.files
+//		 //but as jquery creates its own event object you ave to access 
+//		 //the browser even through originalEvent.  which looks like this
+//		 var files = event.originalEvent.dataTransfer.files;
+//
+//		 //Use FormData to send the files
+//		 var formData = new FormData();
+//
+//		 //append the files to the formData object
+//		 //if you are using multiple attribute you would loop through 
+//		 //but for this example i will skip that
+//		 formData.append('files', files[0]);
+//
+//		 });
+});
+
