@@ -86,15 +86,21 @@ function generateJavaFromTree() {
 
 	$('#code_alert').html('');
 	$("#output").show();
+	
+	var result;
 
 	if ( $("#radio_codetype_mv").is(":checked") ) {
 		// Member variables
-		generateJavaFromTreeMv(selected);
+		result = generateJavaFromTreeMv(selected);
 	} else if ( $("#radio_codetype_vh").is(":checked") ) {
 		// ViewHolder pattern
-		generateJavaFromTreeVh(selected);
+		result = generateJavaFromTreeVh(selected);
+	} else if ( $("#radio_codetype_ca").is(":checked") ) {
+		// CursorAdapter with ViewHolder
+		result = generateJavaFromTreeCa(selected);
 	}
 	
+	$("#output").text( result );
 }
 
 function generateJavaFromTreeMv(selected) {
@@ -113,9 +119,9 @@ function generateJavaFromTreeMv(selected) {
 		result += "\t\t" + node.id + " = (" + node.className + ")" + getFindViewCode( parentview_dot, node ) + ";\n";
 	}
 	
-	result += "\t}\n";
-	
-	$("#output").text( result );
+	result += "\t}";
+
+	return result;
 }
 
 function generateJavaFromTreeVh(selected) {
@@ -162,10 +168,85 @@ function generateJavaFromTreeVh(selected) {
 	
 	result += "\t}\n";
 	
-	result += "}\n";
+	result += "}";
 	
-	$("#output").text( result );
+	return result;
 } 
+
+function generateJavaFromTreeCa(selected) {
+	var result = "public class MyCursorAdapter extends CursorAdapter {\n\n";
+	result += tabEachLine( generateJavaFromTreeVh(selected) ) + "\n";
+	result += "\n";
+	result += "\tprivate LayoutInflater inflater;\n";
+	result += "\n";
+	result += "\tpublic MyCursorAdapter(Context context, Cursor cursor) {\n";
+	result += "\t\tsuper(context, cursor, true);\n";
+	result += "\t\tthis.inflater = LayoutInflater.from( context );\n";
+	result += "\t}\n";
+	result += "\n";
+	
+	
+	/*
+	 * 	@Override
+	public void bindView(View view, Context context, Cursor cursor) {
+		ViewHolder holder = (ViewHolder) arg0.getTag();
+		
+		Friends friends = FriendsContent.getFriendsById( arg1, arg2.getInt( arg2.getColumnIndex( TableParties.FRIENDS_ID ) ) );
+
+		if ( friends.color != null ) {
+			holder.color.setBackgroundColor( friends.color );
+		} else {
+			holder.color.setBackgroundResource( 0 );
+		}
+		
+		holder.txtFriends.setText( friends.name );
+		DateMidnight date = new DateMidnight( arg2.getLong( arg2.getColumnIndex( TableParties.TIMESTAMP ) ) );
+		HostbookApplication.logDebug( "Date: %d: %s", date.getMillis(), date.toString() ) ;
+		holder.txtDate.setText( date.toString( "EEE, dd. MMM y" ) );
+		holder.imgPlace.setImageResource( arg2.getInt( arg2.getColumnIndex( TableParties.PLACE_ID ) ) == TableParties.PLACE_ID_OUR_PLACE ? R.drawable.ic_home : R.drawable.ic_globe );
+		holder.txtOccasion.setText( arg2.getString( arg2.getColumnIndex( TableParties.OCCASION ) ) );
+	}
+
+	@Override
+	public View newView(Context arg0, Cursor arg1, ViewGroup arg2) {
+		ViewHolder holder = new ViewHolder();
+		holder.layout = (LinearLayout) inflater.inflate( R.layout.my_listitem, arg2, false );
+		holder.color = holder.layout.findViewById( R.id.color );
+		holder.txtFriends = (TextView) holder.layout.findViewById( R.id.txtFriends );
+		holder.txtDate = (TextView) holder.layout.findViewById( R.id.txtDate );
+		holder.imgPlace = (ImageView) holder.layout.findViewById( R.id.imgPlace );
+		holder.txtOccasion = (TextView) holder.layout.findViewById( R.id.txtOccasion );
+		
+		holder.layout.setTag( holder );
+		return holder.layout;
+	}
+
+	 */
+	result += "\t@Override\n";
+	result += "\tpublic void bindView(View view, Context context, Cursor cursor) {\n";
+	result += "\t\tViewHolder vh = (ViewHolder)view.getTag();\n";
+	result += "\n";
+	result += "\t\t// Bind your data to the views here\n";
+	result += "\t}";
+	result += "\n";
+	
+	result += "\t@Override\n";
+	result += "\tpublic View newView(Context context, Cursor cursor, ViewGroup parent) {\n";
+	result += "\t\t// Reference your layout here\n";
+	result += "\t\tView view = inflater.inflate( R.layout.my_listitem, parent, false );\n";
+	result += "\t\tview.setTag( ViewHolder.create( view ) );\n";
+	result += "\t\treturn view;\n";
+	result += "\t}";
+	result += "\n";
+	
+	result += "}";
+	
+	return result;
+} 
+
+function tabEachLine( input ) {
+	return "\t" + input.replace( /\n/g, "\n\t" );
+}
 
 function getFindViewCode( parentview_dot, node ) {
 	if ( node.type == "view" ) {
@@ -336,6 +417,9 @@ $(document).ready(function() {
 		generateJavaFromTree();
 	});
 	$("#radio_codetype_vh").change(function() {
+		generateJavaFromTree();
+	});
+	$("#radio_codetype_ca").change(function() {
 		generateJavaFromTree();
 	});
 //	$(document).on('dragenter',function(event){
