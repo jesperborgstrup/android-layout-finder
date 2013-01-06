@@ -22,6 +22,27 @@ function sampleData() {
 	generateJavaFromTree();
 }
 
+function showOptions() {
+	$("#setting_mv_parentview").hide();
+	$("#setting_aa_classname").hide();
+	$("#setting_aa_arraytype").hide();
+	$("#setting_ca_classname").hide();
+	
+	if ( $("#radio_codetype_mv").is(":checked") ) {
+		// Member variables
+		$("#setting_mv_parentview").show();
+	} else if ( $("#radio_codetype_vh").is(":checked") ) {
+		// ViewHolder pattern
+	} else if ( $("#radio_codetype_aa").is(":checked") ) {
+		// ArrayAdapter with ViewHolder
+		$("#setting_aa_classname").show();
+		$("#setting_aa_arraytype").show();
+	} else if ( $("#radio_codetype_ca").is(":checked") ) {
+		// CursorAdapter with ViewHolder
+		$("#setting_ca_classname").show();
+	}
+}
+
 function generateTreeFromInput() {
 	var rootElement;
 	try {
@@ -87,7 +108,7 @@ function generateJavaFromTree() {
 	$('#code_alert').html('');
 	$("#output").show();
 	
-	var result;
+	var result = "";
 
 	if ( $("#radio_codetype_mv").is(":checked") ) {
 		// Member variables
@@ -95,6 +116,9 @@ function generateJavaFromTree() {
 	} else if ( $("#radio_codetype_vh").is(":checked") ) {
 		// ViewHolder pattern
 		result = generateJavaFromTreeVh(selected);
+	} else if ( $("#radio_codetype_aa").is(":checked") ) {
+		// ArrayAdapter with ViewHolder
+		result = generateJavaFromTreeAa(selected);
 	} else if ( $("#radio_codetype_ca").is(":checked") ) {
 		// CursorAdapter with ViewHolder
 		result = generateJavaFromTreeCa(selected);
@@ -110,7 +134,7 @@ function generateJavaFromTreeMv(selected) {
 		result += "\tprivate " + node.className + " " + node.id + ";\n";
 	}
 	
-	var parentview = $("#edt_parentview").val();
+	var parentview = $("#edt_mv_parentview").val();
 	var parentview_dot = parentview == "" ? "" : parentview+".";
 	result += "\n";
 	result += "\tprivate void initializeViews() {\n";
@@ -147,7 +171,7 @@ function generateJavaFromTreeVh(selected) {
 	
 	result += "\t}\n";
 	
-	var parentview = $("#edt_parentview").val() != "" ? $("#edt_parentview").val() : "rootView";
+	var parentview = $("#edt_mv_parentview").val() != "" ? $("#edt_mv_parentview").val() : "rootView";
 	var parentview_dot = parentview == "" ? "" : parentview+".";
 	result += "\n";
 	result += "\tpublic static ViewHolder create(View "+parentview+") {\n";
@@ -173,55 +197,80 @@ function generateJavaFromTreeVh(selected) {
 	return result;
 } 
 
+function generateJavaFromTreeAa(selected) {
+	var className = $("#edt_aa_classname").val();
+	className = className == "" ? "MyArrayAdapter" : className;
+	var arrayType = $("#edt_aa_arraytype").val();
+	arrayType = arrayType == "" ? "Object" : arrayType;
+	
+	var result = "public class "+className+" extends ArrayAdapter<"+arrayType+"> {\n\n";
+	result += tabEachLine( generateJavaFromTreeVh(selected) ) + "\n";
+	result += "\n";
+
+	result += "\t@Override\n";
+	result += "\tpublic View getView(int position, View convertView, ViewGroup parent) {\n";
+	result += "\t\tfinal ViewHolder vh;\n";
+	result += "\t\tif ( convertView == null ) {\n";
+	result += "\t\t\t// Reference your layout here\n";
+	result += "\t\t\tView view = inflater.inflate( R.layout.my_listitem, parent, false );\n";
+	result += "\t\t\tvh = ViewHolder.create( view );\n";
+	result += "\t\t\tview.setTag( vh );\n";
+	result += "\t\t} else {\n";
+	result += "\t\t\tvh = (ViewHolder)convertView.getTag();\n";
+	result += "\t\t}\n";
+	result += "\n";
+	result += "\t\t// Bind your data to the views here\n";
+	result += "\t}\n";
+	
+	result += "\n";
+	result += "\tprivate LayoutInflater inflater;\n";
+	result += "\n";
+	result += "\t// Constructors\n";
+	result += "\tpublic "+className+"(Context context, int resource, int textViewResourceId, List<"+arrayType+"> objects) {\n";
+	result += "\t\tsuper(context, resource, textViewResourceId, objects);\n";
+	result += "\t\tthis.inflater = LayoutInflater.from( context );\n";
+	result += "\t}\n";
+	result += "\tpublic "+className+"(Context context, int resource, int textViewResourceId, "+arrayType+"[] objects) {\n";
+	result += "\t\tsuper(context, resource, textViewResourceId, objects);\n";
+	result += "\t\tthis.inflater = LayoutInflater.from( context );\n";
+	result += "\t}\n";
+	result += "\tpublic "+className+"(Context context, int resource, int textViewResourceId) {\n";
+	result += "\t\tsuper(context, resource, textViewResourceId);\n";
+	result += "\t\tthis.inflater = LayoutInflater.from( context );\n";
+	result += "\t}\n";
+	result += "\tpublic "+className+"(Context context, int textViewResourceId, List<"+arrayType+"> objects) {\n";
+	result += "\t\tsuper(context, textViewResourceId, objects);\n";
+	result += "\t\tthis.inflater = LayoutInflater.from( context );\n";
+	result += "\t}\n";
+	result += "\tpublic "+className+"(Context context, int textViewResourceId, "+arrayType+"[] objects) {\n";
+	result += "\t\tsuper(context, textViewResourceId, objects);\n";
+	result += "\t\tthis.inflater = LayoutInflater.from( context );\n";
+	result += "\t}\n";
+	result += "\tpublic "+className+"(Context context, int textViewResourceId) {\n";
+	result += "\t\tsuper(context, textViewResourceId);\n";
+	result += "\t\tthis.inflater = LayoutInflater.from( context );\n";
+	result += "\t}\n";
+	
+	result += "}";
+	
+	return result;
+} 
+
 function generateJavaFromTreeCa(selected) {
-	var result = "public class MyCursorAdapter extends CursorAdapter {\n\n";
+	var className = $("#edt_ca_classname").val();
+	className = className == "" ? "MyCursorAdapter" : className;
+	
+	var result = "public class "+className+" extends CursorAdapter {\n\n";
 	result += tabEachLine( generateJavaFromTreeVh(selected) ) + "\n";
 	result += "\n";
 	result += "\tprivate LayoutInflater inflater;\n";
 	result += "\n";
-	result += "\tpublic MyCursorAdapter(Context context, Cursor cursor) {\n";
+	result += "\tpublic "+className+"(Context context, Cursor cursor) {\n";
 	result += "\t\tsuper(context, cursor, true);\n";
 	result += "\t\tthis.inflater = LayoutInflater.from( context );\n";
 	result += "\t}\n";
 	result += "\n";
 	
-	
-	/*
-	 * 	@Override
-	public void bindView(View view, Context context, Cursor cursor) {
-		ViewHolder holder = (ViewHolder) arg0.getTag();
-		
-		Friends friends = FriendsContent.getFriendsById( arg1, arg2.getInt( arg2.getColumnIndex( TableParties.FRIENDS_ID ) ) );
-
-		if ( friends.color != null ) {
-			holder.color.setBackgroundColor( friends.color );
-		} else {
-			holder.color.setBackgroundResource( 0 );
-		}
-		
-		holder.txtFriends.setText( friends.name );
-		DateMidnight date = new DateMidnight( arg2.getLong( arg2.getColumnIndex( TableParties.TIMESTAMP ) ) );
-		HostbookApplication.logDebug( "Date: %d: %s", date.getMillis(), date.toString() ) ;
-		holder.txtDate.setText( date.toString( "EEE, dd. MMM y" ) );
-		holder.imgPlace.setImageResource( arg2.getInt( arg2.getColumnIndex( TableParties.PLACE_ID ) ) == TableParties.PLACE_ID_OUR_PLACE ? R.drawable.ic_home : R.drawable.ic_globe );
-		holder.txtOccasion.setText( arg2.getString( arg2.getColumnIndex( TableParties.OCCASION ) ) );
-	}
-
-	@Override
-	public View newView(Context arg0, Cursor arg1, ViewGroup arg2) {
-		ViewHolder holder = new ViewHolder();
-		holder.layout = (LinearLayout) inflater.inflate( R.layout.my_listitem, arg2, false );
-		holder.color = holder.layout.findViewById( R.id.color );
-		holder.txtFriends = (TextView) holder.layout.findViewById( R.id.txtFriends );
-		holder.txtDate = (TextView) holder.layout.findViewById( R.id.txtDate );
-		holder.imgPlace = (ImageView) holder.layout.findViewById( R.id.imgPlace );
-		holder.txtOccasion = (TextView) holder.layout.findViewById( R.id.txtOccasion );
-		
-		holder.layout.setTag( holder );
-		return holder.layout;
-	}
-
-	 */
 	result += "\t@Override\n";
 	result += "\tpublic void bindView(View view, Context context, Cursor cursor) {\n";
 	result += "\t\tViewHolder vh = (ViewHolder)view.getTag();\n";
@@ -364,6 +413,7 @@ function SelectText(element) {
 
 $(document).ready(function() {
 	//	sampleData();
+	showOptions();
 	generateTreeFromInput();
 	$("#button_parse").click(function() {
 		generateTreeFromInput();
@@ -404,22 +454,17 @@ $(document).ready(function() {
 	$("#help_support").css('cursor','pointer').click(function() {
 		alert("If this is checked, the FragmentManager is retrieved with getSupportFragmentManager() instead of getFragmentManager().");
 	});
-	$("#help_parentview").css('cursor','pointer').click(function() {
+	$("#help_mv_parentview").css('cursor','pointer').click(function() {
 		alert("Enter a Java variable name here to redirect all findViewById() method calls to that variable.");
 	});
 	$("#chk_support").change(function() {
 		generateJavaFromTree();
 	});
-	$("#edt_parentview").bind("keyup paste", function(e){
+	$("#edt_mv_parentview, #edt_aa_classname, #edt_aa_arraytype, #edt_ca_classname").bind("keyup paste", function(e){
 		generateJavaFromTree();
 	});
-	$("#radio_codetype_mv").change(function() {
-		generateJavaFromTree();
-	});
-	$("#radio_codetype_vh").change(function() {
-		generateJavaFromTree();
-	});
-	$("#radio_codetype_ca").change(function() {
+	$("#radio_codetype_mv, #radio_codetype_vh, #radio_codetype_aa, #radio_codetype_ca").change(function() {
+		showOptions();
 		generateJavaFromTree();
 	});
 //	$(document).on('dragenter',function(event){
