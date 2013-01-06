@@ -28,8 +28,8 @@ function generateTreeFromInput() {
 		xmlDoc = $.parseXML( $("#xml_input").val() );
 		root = $( $( xmlDoc ).find( ":first" ).get() );
 		if ( root.children().length == 0 ) {
-			$('#tree_alert').html('<div class="alert alert-info"><span>Paste in your Empty XML file</span></div>');
-			$('#code_alert').html('<div class="alert alert-info"><span>Paste in your Empty XML file</span></div>');
+			$('#tree_alert').html('<div class="alert alert-info"><span>Paste in your XML layout file</span></div>');
+			$('#code_alert').html('<div class="alert alert-info"><span>Paste in your XML layout file</span></div>');
 			$('#tree').html('');
 			
 			$('#output').hide();
