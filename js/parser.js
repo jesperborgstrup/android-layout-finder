@@ -27,6 +27,7 @@ function showOptions() {
 	$("#setting_aa_classname").hide();
 	$("#setting_aa_arraytype").hide();
 	$("#setting_ca_classname").hide();
+	$("#setting_layoutres").hide();
 	
 	if ( $("#radio_codetype_mv").is(":checked") ) {
 		// Member variables
@@ -37,9 +38,11 @@ function showOptions() {
 		// ArrayAdapter with ViewHolder
 		$("#setting_aa_classname").show();
 		$("#setting_aa_arraytype").show();
+		$("#setting_layoutres").show();
 	} else if ( $("#radio_codetype_ca").is(":checked") ) {
 		// CursorAdapter with ViewHolder
 		$("#setting_ca_classname").show();
+		$("#setting_layoutres").show();
 	}
 }
 
@@ -108,6 +111,9 @@ function generateJavaFromTree() {
 	$('#code_alert').html('');
 	$("#output").show();
 	
+	// root is the (invisible) tree system root, and our rootNode is the only
+	// child of that system root
+	var rootNode = root.getChildren()[0].data;
 	var result = "";
 
 	if ( $("#radio_codetype_mv").is(":checked") ) {
@@ -115,13 +121,13 @@ function generateJavaFromTree() {
 		result = generateJavaFromTreeMv(selected);
 	} else if ( $("#radio_codetype_vh").is(":checked") ) {
 		// ViewHolder pattern
-		result = generateJavaFromTreeVh(selected);
+		result = generateJavaFromTreeVh(selected, rootNode);
 	} else if ( $("#radio_codetype_aa").is(":checked") ) {
 		// ArrayAdapter with ViewHolder
-		result = generateJavaFromTreeAa(selected);
+		result = generateJavaFromTreeAa(selected, rootNode);
 	} else if ( $("#radio_codetype_ca").is(":checked") ) {
 		// CursorAdapter with ViewHolder
-		result = generateJavaFromTreeCa(selected);
+		result = generateJavaFromTreeCa(selected, rootNode);
 	}
 	
 	$("#output").text( result );
@@ -148,14 +154,22 @@ function generateJavaFromTreeMv(selected) {
 	return result;
 }
 
-function generateJavaFromTreeVh(selected) {
+function generateJavaFromTreeVh(selected, root) {
 	var result = "private static class ViewHolder {\n";
+	var rootSelected = selected.indexOf( root ) > -1;
+	
+	if ( !rootSelected ) {
+		result += "\tpublic final "+ root.className +" rootView;\n";
+	}
 	for ( var i = 0; i < selected.length; i++ ) {
 		var node = selected[i];
 		result += "\tpublic final " + node.className + " " + node.id + ";\n";
 	}
 	result += "\n";
-	result += "\tpublic ViewHolder(";
+	result += "\tprivate ViewHolder(";
+	if ( !rootSelected ) {
+		result += root.className + " rootView, ";
+	}
 	for ( var i = 0; i < selected.length; i++ ) {
 		var node = selected[i];
 		result += node.className + " " + node.id;
@@ -164,6 +178,9 @@ function generateJavaFromTreeVh(selected) {
 		}
 	}
 	result += ") {\n";
+	if ( !rootSelected ) {
+		result += "\t\tthis.rootView = rootView;\n";
+	}
 	for ( var i = 0; i < selected.length; i++ ) {
 		var node = selected[i];
 		result += "\t\tthis." + node.id + " = " + node.id + ";\n";
@@ -171,16 +188,27 @@ function generateJavaFromTreeVh(selected) {
 	
 	result += "\t}\n";
 	
-	var parentview = $("#edt_mv_parentview").val() != "" ? $("#edt_mv_parentview").val() : "rootView";
+	var parentview;
+	if ( rootSelected ) {
+		parentview = root.id;
+	} else {
+		parentview = $("#edt_mv_parentview").val() != "" ? $("#edt_mv_parentview").val() : "rootView";
+	}
 	var parentview_dot = parentview == "" ? "" : parentview+".";
 	result += "\n";
-	result += "\tpublic static ViewHolder create(View "+parentview+") {\n";
+	result += "\tpublic static ViewHolder create("+root.className+" "+parentview+") {\n";
 	for ( var i = 0; i < selected.length; i++ ) {
 		var node = selected[i];
+		if ( node == root ) {
+			continue;
+		}
 		result += "\t\t" + node.className + " " + node.id + " = (" + node.className + ")" + getFindViewCode( parentview_dot, node ) + ";\n";
 	}		
 	
 	result += "\t\treturn new ViewHolder( ";
+	if ( !rootSelected ) {
+		result += parentview + ", ";
+	}
 	for ( var i = 0; i < selected.length; i++ ) {
 		var node = selected[i];
 		result += node.id;
@@ -197,29 +225,38 @@ function generateJavaFromTreeVh(selected) {
 	return result;
 } 
 
-function generateJavaFromTreeAa(selected) {
+function generateJavaFromTreeAa(selected, root) {
 	var className = $("#edt_aa_classname").val();
 	className = className == "" ? "MyArrayAdapter" : className;
 	var arrayType = $("#edt_aa_arraytype").val();
 	arrayType = arrayType == "" ? "Object" : arrayType;
+	var layoutRes = $("#edt_layoutres").val();
+	layoutRes = layoutRes == "" ? "listitem" : layoutRes;
+	
+	var rootSelected = selected.indexOf( root ) > -1;
 	
 	var result = "public class "+className+" extends ArrayAdapter<"+arrayType+"> {\n\n";
-	result += tabEachLine( generateJavaFromTreeVh(selected) ) + "\n";
+	result += tabEachLine( generateJavaFromTreeVh(selected,root) ) + "\n";
 	result += "\n";
 
 	result += "\t@Override\n";
 	result += "\tpublic View getView(int position, View convertView, ViewGroup parent) {\n";
 	result += "\t\tfinal ViewHolder vh;\n";
 	result += "\t\tif ( convertView == null ) {\n";
-	result += "\t\t\t// Reference your layout here\n";
-	result += "\t\t\tView view = inflater.inflate( R.layout.my_listitem, parent, false );\n";
-	result += "\t\t\tvh = ViewHolder.create( view );\n";
+	result += "\t\t\tView view = inflater.inflate( R.layout."+layoutRes+", parent, false );\n";
+	result += "\t\t\tvh = ViewHolder.create( ("+root.className+")view );\n";
 	result += "\t\t\tview.setTag( vh );\n";
 	result += "\t\t} else {\n";
 	result += "\t\t\tvh = (ViewHolder)convertView.getTag();\n";
 	result += "\t\t}\n";
 	result += "\n";
 	result += "\t\t// Bind your data to the views here\n";
+	result += "\n";
+	if ( rootSelected ) {
+		result += "\t\treturn vh."+root.id+";\n";
+	} else {
+		result += "\t\treturn vh.rootView;\n";
+	}
 	result += "\t}\n";
 	
 	result += "\n";
@@ -256,21 +293,17 @@ function generateJavaFromTreeAa(selected) {
 	return result;
 } 
 
-function generateJavaFromTreeCa(selected) {
+function generateJavaFromTreeCa(selected, root) {
 	var className = $("#edt_ca_classname").val();
 	className = className == "" ? "MyCursorAdapter" : className;
 	
-	var result = "public class "+className+" extends CursorAdapter {\n\n";
-	result += tabEachLine( generateJavaFromTreeVh(selected) ) + "\n";
-	result += "\n";
-	result += "\tprivate LayoutInflater inflater;\n";
-	result += "\n";
-	result += "\tpublic "+className+"(Context context, Cursor cursor) {\n";
-	result += "\t\tsuper(context, cursor, true);\n";
-	result += "\t\tthis.inflater = LayoutInflater.from( context );\n";
-	result += "\t}\n";
-	result += "\n";
+	var layoutRes = $("#edt_layoutres").val();
+	layoutRes = layoutRes == "" ? "listitem" : layoutRes;
 	
+	var result = "public class "+className+" extends CursorAdapter {\n\n";
+	result += tabEachLine( generateJavaFromTreeVh(selected,root) ) + "\n";
+	result += "\n";
+
 	result += "\t@Override\n";
 	result += "\tpublic void bindView(View view, Context context, Cursor cursor) {\n";
 	result += "\t\tViewHolder vh = (ViewHolder)view.getTag();\n";
@@ -281,12 +314,24 @@ function generateJavaFromTreeCa(selected) {
 	
 	result += "\t@Override\n";
 	result += "\tpublic View newView(Context context, Cursor cursor, ViewGroup parent) {\n";
-	result += "\t\t// Reference your layout here\n";
-	result += "\t\tView view = inflater.inflate( R.layout.my_listitem, parent, false );\n";
-	result += "\t\tview.setTag( ViewHolder.create( view ) );\n";
+	result += "\t\tView view = inflater.inflate( R.layout."+layoutRes+", parent, false );\n";
+	result += "\t\tview.setTag( ViewHolder.create( ("+root.className+")view ) );\n";
 	result += "\t\treturn view;\n";
 	result += "\t}";
 	result += "\n";
+	
+	result += "\n";
+	result += "\tprivate LayoutInflater inflater;\n";
+	result += "\n";
+	result += "\t// Constructors\n";
+	result += "\tpublic "+className+"(Context context, Cursor c, boolean autoRequery) {\n";
+	result += "\t\tsuper(context, c, autoRequery);\n";
+	result += "\t\tthis.inflater = LayoutInflater.from( context );\n";
+	result += "\t}\n";
+	result += "\tpublic "+className+"(Context context, Cursor c, int flags) {\n";
+	result += "\t\tsuper(context, c, flags);\n";
+	result += "\t\tthis.inflater = LayoutInflater.from( context );\n";
+	result += "\t}\n";
 	
 	result += "}";
 	
@@ -460,7 +505,7 @@ $(document).ready(function() {
 	$("#chk_support").change(function() {
 		generateJavaFromTree();
 	});
-	$("#edt_mv_parentview, #edt_aa_classname, #edt_aa_arraytype, #edt_ca_classname").bind("keyup paste", function(e){
+	$("#edt_mv_parentview, #edt_aa_classname, #edt_aa_arraytype, #edt_ca_classname, #edt_layoutres").bind("keyup paste", function(e){
 		generateJavaFromTree();
 	});
 	$("#radio_codetype_mv, #radio_codetype_vh, #radio_codetype_aa, #radio_codetype_ca").change(function() {
