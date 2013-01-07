@@ -347,7 +347,7 @@ function getFindViewCode( parentview_dot, node ) {
 		return parentview_dot + "findViewById( R.id."+node.id+" )";
 	} else if ( node.type == "fragment") {
 		var fragmentMan = $("#chk_support").is(":checked") ? "getSupportFragmentManager()" : "getFragmentManager()";
-		result += fragmentMan + ".findFragmentById( R.id."+node.id+" )";
+		return fragmentMan + ".findFragmentById( R.id."+node.id+" )";
 	}
 }
 
