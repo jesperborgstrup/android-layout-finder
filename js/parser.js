@@ -101,6 +101,9 @@ function generateTreeFromInput() {
 function generateJavaFromTree() {
 	var root = $("#tree").dynatree("getRoot");
 	var selected = getSelectedTreeNodes( root );
+	for ( var i = 0; i < selected.length; i++ ) {
+		selected[i] = prepareForOutput( selected[i] );
+	}
 	
 	if ( selected.length == 0 ) {
 		$('#code_alert').html('<div class="alert alert-info"><span>Select at least one view in the tree above to generate code for</span></div>');
@@ -351,6 +354,15 @@ function getFindViewCode( parentview_dot, node ) {
 	}
 }
 
+function getClassName( node ) {
+ 	if ( ! $("#chk_includepackage").is(':checked') && node.className.indexOf( '.' ) > -1 ) {
+ 		
+ 		return node.className.substring( node.className.lastIndexOf( '.' ) + 1, node.className.length );
+ 	} else {
+ 		return node.className;
+ 	}
+}
+
 function getSelectedTreeNodes( root ) {
 	var result = [];
 	if ( root.isSelected() ) {
@@ -425,6 +437,13 @@ function prepareForTree( el ) {
 
 	
 	return el;
+}
+
+function prepareForOutput( node ) {
+	var newNode = jQuery.extend( true, {}, node );
+	newNode.className = getClassName( newNode );
+	
+	return newNode;
 }
 
 function stripIdPrefix( idString ) {
@@ -502,7 +521,7 @@ $(document).ready(function() {
 	$("#help_mv_parentview").css('cursor','pointer').click(function() {
 		alert("Enter a Java variable name here to redirect all findViewById() method calls to that variable.");
 	});
-	$("#chk_support").change(function() {
+	$("#chk_support, #chk_includepackage").change(function() {
 		generateJavaFromTree();
 	});
 	$("#edt_mv_parentview, #edt_aa_classname, #edt_aa_arraytype, #edt_ca_classname, #edt_layoutres").bind("keyup paste", function(e){
