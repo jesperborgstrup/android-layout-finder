@@ -140,7 +140,7 @@ function generateJavaFromTreeMv(selected) {
 	var result = "";
 	for ( var i = 0; i < selected.length; i++ ) {
 		var node = selected[i];
-		result += "\tprivate " + node.className + " " + node.id + ";\n";
+		result += "\tprivate " + node.className + " " + node.varName + ";\n";
 	}
 	
 	var parentview = $("#edt_mv_parentview").val();
@@ -149,7 +149,7 @@ function generateJavaFromTreeMv(selected) {
 	result += "\tprivate void initializeViews() {\n";
 	for ( var i = 0; i < selected.length; i++ ) {
 		var node = selected[i];
-		result += "\t\t" + node.id + " = (" + node.className + ")" + getFindViewCode( parentview_dot, node ) + ";\n";
+		result += "\t\t" + node.varName + " = (" + node.className + ")" + getFindViewCode( parentview_dot, node ) + ";\n";
 	}
 	
 	result += "\t}";
@@ -166,7 +166,7 @@ function generateJavaFromTreeVh(selected, root) {
 	}
 	for ( var i = 0; i < selected.length; i++ ) {
 		var node = selected[i];
-		result += "\tpublic final " + node.className + " " + node.id + ";\n";
+		result += "\tpublic final " + node.className + " " + node.varName + ";\n";
 	}
 	result += "\n";
 	result += "\tprivate ViewHolder(";
@@ -175,7 +175,7 @@ function generateJavaFromTreeVh(selected, root) {
 	}
 	for ( var i = 0; i < selected.length; i++ ) {
 		var node = selected[i];
-		result += node.className + " " + node.id;
+		result += node.className + " " + node.varName;
 		if ( i < selected.length - 1 ) {
 			result += ", ";
 		}
@@ -186,7 +186,7 @@ function generateJavaFromTreeVh(selected, root) {
 	}
 	for ( var i = 0; i < selected.length; i++ ) {
 		var node = selected[i];
-		result += "\t\tthis." + node.id + " = " + node.id + ";\n";
+		result += "\t\tthis." + node.varName + " = " + node.varName + ";\n";
 	}
 	
 	result += "\t}\n";
@@ -205,7 +205,7 @@ function generateJavaFromTreeVh(selected, root) {
 		if ( node == root ) {
 			continue;
 		}
-		result += "\t\t" + node.className + " " + node.id + " = (" + node.className + ")" + getFindViewCode( parentview_dot, node ) + ";\n";
+		result += "\t\t" + node.className + " " + node.varName + " = (" + node.className + ")" + getFindViewCode( parentview_dot, node ) + ";\n";
 	}		
 	
 	result += "\t\treturn new ViewHolder( ";
@@ -214,7 +214,7 @@ function generateJavaFromTreeVh(selected, root) {
 	}
 	for ( var i = 0; i < selected.length; i++ ) {
 		var node = selected[i];
-		result += node.id;
+		result += node.varName;
 		if ( i < selected.length - 1 ) {
 			result += ", ";
 		}
@@ -356,11 +356,29 @@ function getFindViewCode( parentview_dot, node ) {
 
 function getClassName( node ) {
  	if ( ! $("#chk_includepackage").is(':checked') && node.className.indexOf( '.' ) > -1 ) {
- 		
  		return node.className.substring( node.className.lastIndexOf( '.' ) + 1, node.className.length );
  	} else {
  		return node.className;
  	}
+}
+
+function getVariableName( node ) {
+	var prefix = $("#edt_varprefix").val(); 
+ 	if ( prefix != "" ) {
+ 		// If the prefix ends with an underscore, don't capitalize
+ 		if ( prefix.charAt( prefix.length-1 ) == '_' ) {
+ 			return prefix + node.id;
+ 		} else {
+ 			return prefix + capitalize( node.id );
+ 		}
+ 	} else {
+ 		return node.id;
+ 	}
+}
+
+function capitalize(string)
+{
+    return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
 function getSelectedTreeNodes( root ) {
@@ -442,6 +460,7 @@ function prepareForTree( el ) {
 function prepareForOutput( node ) {
 	var newNode = jQuery.extend( true, {}, node );
 	newNode.className = getClassName( newNode );
+	newNode.varName = getVariableName( newNode );
 	
 	return newNode;
 }
@@ -524,7 +543,7 @@ $(document).ready(function() {
 	$("#chk_support, #chk_includepackage").change(function() {
 		generateJavaFromTree();
 	});
-	$("#edt_mv_parentview, #edt_aa_classname, #edt_aa_arraytype, #edt_ca_classname, #edt_layoutres").bind("keyup paste", function(e){
+	$("#edt_varprefix, #edt_mv_parentview, #edt_aa_classname, #edt_aa_arraytype, #edt_ca_classname, #edt_layoutres").bind("keyup paste", function(e){
 		generateJavaFromTree();
 	});
 	$("#radio_codetype_mv, #radio_codetype_vh, #radio_codetype_aa, #radio_codetype_ca").change(function() {
