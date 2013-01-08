@@ -71,7 +71,7 @@
 				</div>
 			</div>
 			<div class="span4" id="menu">
-				<h5 class="menu_header">Code output settings</h5>
+				<h5 class="menu_header">General settings</h5>
 				<div class="menu_fragment">
 					<form class="form-inline" id="setting_support">
 						<label class="checkbox"> <input type="checkbox"
@@ -79,18 +79,27 @@
 						</label> <img src="img/icon-help.png" style="margin-left: 5px"
 							id="help_support" />
 					</form>
-					<form class="form-inline" style="margin-top: 25px"
+					<form class="form-inline" style="margin-top: 15px"
 						id="setting_includepackage">
 						<label class="checkbox"> <input type="checkbox"
 							id="chk_includepackage" /> Use full package name for custom
 							views
 						</label>
 					</form>
-					<form class="form-inline" style="margin-top: 25px"
+					<form class="form-inline" style="margin-top: 15px"
+						id="setting_dontcamelcase">
+						<label class="checkbox"> <input type="checkbox"
+							id="chk_dontcamelcase" /> Don't convert underscores to camelCase
+						</label>
+					</form>
+					<form class="form-inline" style="margin-top: 15px"
 						id="setting_varprefix">
 						<input type="text" id="edt_varprefix" class="input-large"
 							placeholder="Variable prefix (None)">
 					</form>
+				</div>
+				<h5 class="menu_header">Output settings</h5>
+				<div class="menu_fragment">
 
 					<strong>Generated code type:</strong> <label class="radio"
 						style="margin-top: 5px"> <input type="radio"
@@ -109,29 +118,29 @@
 						value="CursorAdapter with ViewHolder"> CursorAdapter with
 						ViewHolder
 					</label>
-					<form class="form-inline" style="margin-top: 25px"
+					<form class="form-inline" style="margin-top: 15px"
 						id="setting_mv_parentview">
 						<input type="text" id="edt_mv_parentview" class="input-large"
 							placeholder="Custom view root variable"><img
 							style="margin-left: 10px" src="img/icon-help.png"
 							id="help_mv_parentview" />
 					</form>
-					<form class="form-inline" style="margin-top: 25px"
+					<form class="form-inline" style="margin-top: 15px"
 						id="setting_aa_classname">
 						<input type="text" id="edt_aa_classname" class="input-large"
 							placeholder="Class name (MyArrayAdapter)">
 					</form>
-					<form class="form-inline" style="margin-top: 25px"
+					<form class="form-inline" style="margin-top: 15px"
 						id="setting_aa_arraytype">
 						<input type="text" id="edt_aa_arraytype" class="input-large"
 							placeholder="Generic type (Object)">
 					</form>
-					<form class="form-inline" style="margin-top: 25px"
+					<form class="form-inline" style="margin-top: 15px"
 						id="setting_ca_classname">
 						<input type="text" id="edt_ca_classname" class="input-large"
 							placeholder="Class name (MyCursorAdapter)">
 					</form>
-					<form class="form-inline" style="margin-top: 25px"
+					<form class="form-inline" style="margin-top: 15px"
 						id="setting_layoutres">
 						<input type="text" id="edt_layoutres" class="input-large"
 							placeholder="Layout resource ID (listitem)">

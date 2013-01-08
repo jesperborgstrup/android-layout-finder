@@ -363,16 +363,27 @@ function getClassName( node ) {
 }
 
 function getVariableName( node ) {
+	var camelcase = !$("#chk_dontcamelcase").is(":checked");
 	var prefix = $("#edt_varprefix").val(); 
+	var varName = node.id;
+	
+	if ( camelcase ) {
+		varNameParts = varName.split( "_" );
+		varName = varNameParts[0];
+		$.each( varNameParts.slice( 1 ), function(key,part){
+			varName += capitalize( part );
+		});
+	}
+	
  	if ( prefix != "" ) {
  		// If the prefix ends with an underscore, don't capitalize
  		if ( prefix.charAt( prefix.length-1 ) == '_' ) {
- 			return prefix + node.id;
+ 			return prefix + varName;
  		} else {
- 			return prefix + capitalize( node.id );
+ 			return prefix + capitalize( varName );
  		}
  	} else {
- 		return node.id;
+ 		return varName;
  	}
 }
 
@@ -540,7 +551,7 @@ $(document).ready(function() {
 	$("#help_mv_parentview").css('cursor','pointer').click(function() {
 		alert("Enter a Java variable name here to redirect all findViewById() method calls to that variable.");
 	});
-	$("#chk_support, #chk_includepackage").change(function() {
+	$("#chk_support, #chk_includepackage, #chk_dontcamelcase").change(function() {
 		generateJavaFromTree();
 	});
 	$("#edt_varprefix, #edt_mv_parentview, #edt_aa_classname, #edt_aa_arraytype, #edt_ca_classname, #edt_layoutres").bind("keyup paste", function(e){
