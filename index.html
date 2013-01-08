@@ -2,7 +2,8 @@
 <html>
 <head>
 <title>Android Layout Finder | Buzzing Android</title>
-
+<meta name="description"
+	content="An free and fast online tool for generating Java code for your Android XML layouts.">
 <script type="text/javascript" src="js/jquery-1.8.3.min.js"></script>
 <!--<script type="text/javascript" src="js/jquery.zclip.min.js"></script>-->
 <script type="text/javascript" src="js/jquery-ui.custom.js"></script>
@@ -33,23 +34,66 @@
 					Android Layout Finder | <a href="http://www.buzzingandroid.com">Buzzing
 						Android</a>
 				</h1>
-				<p class="lead">
-					The Android Layout Finder helps you create the code that ties your
-					Android UI and Java code together.<br />It's real easy! Just paste
-					your xml layout code in the first textfield, pick the views that
-					you need, and your code is automatically generated for you.
-				</p>
+				<p class="lead">The Android Layout Finder helps you create the
+					code that ties your Android UI and Java code together.</p>
+				<p class="lead">It's real easy! Just paste your Android XML
+					layout code in the first text field, pick the views that you need,
+					and your code is automatically generated for you.</p>
+				<p class="lead">No more typing out all those nearly identical
+					findViewById() and findFragmentById() calls in your activities or
+					fragments whenever you change your Android layouts.</p>
 			</div>
 		</div>
 		<div class="row-fluid">
 
 			<div class="span8" id="main">
 				<div id="step_1">
-					<h3 class="three_header three_header_first">1. Enter XML
-						Layout:</h3>
+					<h3 class="three_header three_header_first">1. Enter Android
+						XML Layout:</h3>
 					<p class="three_header_tip">Paste in your Android XML Layout
 						code</p>
-					<textarea rows="10" class="input-block-level" id="xml_input"></textarea>
+					<textarea rows="10" class="input-block-level" id="xml_input"><?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    android:id="@+id/RLayout"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    >
+    <TextView
+        android:id="@+id/lblComments"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Comments"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        />
+    <EditText
+        android:id="@+id/txtComments"
+        android:layout_width="fill_parent"
+        android:layout_height="170px"
+        android:textSize="18sp"
+        android:layout_alignLeft="@+id/lblComments"
+        android:layout_below="@+id/lblComments"
+        android:layout_centerHorizontal="true"
+        />
+    <Button
+        android:id="@+id/btnSave"
+        android:layout_width="125px"
+        android:layout_height="wrap_content"
+        android:text="Save"
+        android:layout_below="@+id/txtComments"
+        android:layout_alignRight="@+id/txtComments"
+        />
+    <Button
+        android:id="@+id/btnCancel"
+        android:layout_width="124px"
+        android:layout_height="wrap_content"
+        android:text="Cancel"
+        android:layout_below="@+id/txtComments"
+        android:layout_alignLeft="@+id/txtComments"
+        />
+</RelativeLayout>
+</textarea>
 				</div>
 				<div id="step_2">
 					<h3 class="three_header">2. Pick your Views:</h3>
@@ -60,13 +104,66 @@
 				</div>
 				<div id="step_3">
 					<h3 class="three_header">
-						3. Get your code:
+						3. Get your Java code:
 						<!-- <button class="btn" id="button_copy_java"><img src="img/icon-copy.png" /> Copy to clipboard</button>-->
 					</h3>
 					<p class="three_header_tip">Click on the code to select the
 						entire text</p>
 					<div id="code_alert"></div>
-					<pre id="output"></pre>
+					<pre id="output">public class MyCursorAdapter extends CursorAdapter {
+
+	private static class ViewHolder {
+		public final RelativeLayout rootView;
+		public final RelativeLayout RLayout;
+		public final TextView lblComments;
+		public final EditText txtComments;
+		public final Button btnSave;
+		public final Button btnCancel;
+	
+		private ViewHolder(RelativeLayout rootView, RelativeLayout RLayout, TextView lblComments, EditText txtComments, Button btnSave, Button btnCancel) {
+			this.rootView = rootView;
+			this.RLayout = RLayout;
+			this.lblComments = lblComments;
+			this.txtComments = txtComments;
+			this.btnSave = btnSave;
+			this.btnCancel = btnCancel;
+		}
+	
+		public static ViewHolder create(RelativeLayout rootView) {
+			RelativeLayout RLayout = (RelativeLayout)rootView.findViewById( R.id.RLayout );
+			TextView lblComments = (TextView)rootView.findViewById( R.id.lblComments );
+			EditText txtComments = (EditText)rootView.findViewById( R.id.txtComments );
+			Button btnSave = (Button)rootView.findViewById( R.id.btnSave );
+			Button btnCancel = (Button)rootView.findViewById( R.id.btnCancel );
+			return new ViewHolder( rootView, RLayout, lblComments, txtComments, btnSave, btnCancel );
+		}
+	}
+
+	@Override
+	public void bindView(View view, Context context, Cursor cursor) {
+		ViewHolder vh = (ViewHolder)view.getTag();
+
+		// Bind your data to the views here
+	}
+	@Override
+	public View newView(Context context, Cursor cursor, ViewGroup parent) {
+		View view = inflater.inflate( R.layout.listitem, parent, false );
+		view.setTag( ViewHolder.create( (RelativeLayout)view ) );
+		return view;
+	}
+
+	private LayoutInflater inflater;
+
+	// Constructors
+	public MyCursorAdapter(Context context, Cursor c, boolean autoRequery) {
+		super(context, c, autoRequery);
+		this.inflater = LayoutInflater.from( context );
+	}
+	public MyCursorAdapter(Context context, Cursor c, int flags) {
+		super(context, c, flags);
+		this.inflater = LayoutInflater.from( context );
+	}
+}</pre>
 					<!-- 					<textarea rows="10" id="output" class="input-block-level"></textarea> -->
 				</div>
 			</div>

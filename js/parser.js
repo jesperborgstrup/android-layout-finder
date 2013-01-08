@@ -507,6 +507,7 @@ function SelectText(element) {
 
 $(document).ready(function() {
 	//	sampleData();
+	$("#xml_input").val('');
 	showOptions();
 	generateTreeFromInput();
 	$("#button_parse").click(function() {

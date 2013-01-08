@@ -20,6 +20,14 @@ div.menu_fragment {
 	padding-right: 20px;
 }
 
+h1 {
+	margin-bottom: 20px;
+}
+
+p.lead {
+	margin-bottom: 10px;
+}
+
 #main {
 	
 }
