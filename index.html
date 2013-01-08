@@ -3,16 +3,17 @@
 <head>
 <title>Android Layout Finder | Buzzing Android</title>
 <meta name="description"
-	content="An free and fast online tool for generating Java code for your Android XML layouts.">
-<script type="text/javascript" src="js/jquery-1.8.3.min.js"></script>
-<!--<script type="text/javascript" src="js/jquery.zclip.min.js"></script>-->
-<script type="text/javascript" src="js/jquery-ui.custom.js"></script>
-<script type="text/javascript" src="js/jquery.cookie.js"></script>
+	content="A free and fast online tool for generating Java code for your Android XML layouts.">
+<script type="text/javascript" src="js/lib/jquery-1.8.3.min.js"></script>
+<!--<script type="text/javascript" src="js/lib/jquery.zclip.min.js"></script>-->
+<script type="text/javascript" src="js/lib/jquery-ui.custom.js"></script>
+<script type="text/javascript" src="js/lib/jquery.cookie.js"></script>
 <link rel='stylesheet' type='text/css' href='css/ui.dynatree.css'>
 <link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
-<script type="text/javascript" src="js/jquery.dynatree.min.js"></script>
+<script type="text/javascript" src="js/lib/jquery.dynatree.min.js"></script>
+<script src="js/lib/bootstrap.min.js"></script>
 <script type="text/javascript" src="js/parser.js"></script>
-<script src="js/bootstrap.min.js"></script>
+<script type="text/javascript" src="js/code_generators.js"></script>
 <link rel='stylesheet' type='text/css' href='css/style.css'>
 
 <!--  SHARE THIS -->
@@ -52,46 +53,31 @@
 						XML Layout:</h3>
 					<p class="three_header_tip">Paste in your Android XML Layout
 						code</p>
-					<textarea rows="10" class="input-block-level" id="xml_input"><?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    android:id="@+id/RLayout"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    >
-    <TextView
-        android:id="@+id/lblComments"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Comments"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        />
-    <EditText
-        android:id="@+id/txtComments"
-        android:layout_width="fill_parent"
-        android:layout_height="170px"
-        android:textSize="18sp"
-        android:layout_alignLeft="@+id/lblComments"
-        android:layout_below="@+id/lblComments"
-        android:layout_centerHorizontal="true"
-        />
-    <Button
-        android:id="@+id/btnSave"
-        android:layout_width="125px"
-        android:layout_height="wrap_content"
-        android:text="Save"
-        android:layout_below="@+id/txtComments"
-        android:layout_alignRight="@+id/txtComments"
-        />
-    <Button
-        android:id="@+id/btnCancel"
-        android:layout_width="124px"
-        android:layout_height="wrap_content"
-        android:text="Cancel"
-        android:layout_below="@+id/txtComments"
-        android:layout_alignLeft="@+id/txtComments"
-        />
+					<textarea rows="10" class="input-block-level" id="xml_input">
+						<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout android:id="@+id/RLayout"
+							android:layout_width="fill_parent"
+							android:layout_height="fill_parent"
+							xmlns:android="http://schemas.android.com/apk/res/android">
+    <TextView android:id="@+id/lblComments"
+							android:layout_width="wrap_content"
+							android:layout_height="wrap_content" android:text="Comments"
+							android:layout_alignParentTop="true"
+							android:layout_alignParentLeft="true" />
+    <EditText android:id="@+id/txtComments"
+							android:layout_width="fill_parent" android:layout_height="170px"
+							android:textSize="18sp"
+							android:layout_alignLeft="@+id/lblComments"
+							android:layout_below="@+id/lblComments"
+							android:layout_centerHorizontal="true" />
+    <Button android:id="@+id/btnSave" android:layout_width="125px"
+							android:layout_height="wrap_content" android:text="Save"
+							android:layout_below="@+id/txtComments"
+							android:layout_alignRight="@+id/txtComments" />
+    <Button android:id="@+id/btnCancel" android:layout_width="124px"
+							android:layout_height="wrap_content" android:text="Cancel"
+							android:layout_below="@+id/txtComments"
+							android:layout_alignLeft="@+id/txtComments" />
 </RelativeLayout>
 </textarea>
 				</div>
@@ -214,6 +200,9 @@
 						name="radio_codetype" id="radio_codetype_ca"
 						value="CursorAdapter with ViewHolder"> CursorAdapter with
 						ViewHolder
+					</label><label class="radio"> <input type="radio"
+						name="radio_codetype" id="radio_codetype_rg" value="RoboGuice">
+						RoboGuice
 					</label>
 					<form class="form-inline" style="margin-top: 15px"
 						id="setting_mv_parentview">
@@ -241,6 +230,12 @@
 						id="setting_layoutres">
 						<input type="text" id="edt_layoutres" class="input-large"
 							placeholder="Layout resource ID (listitem)">
+					</form>
+					<form class="form-inline" style="margin-top: 15px"
+						id="setting_rg_linebreak">
+						<label class="checkbox"> <input type="checkbox"
+							id="chk_rg_linebreak" /> Break lines after @InjectView
+						</label>
 					</form>
 				</div>
 				<h5 class="menu_header">Example</h5>
