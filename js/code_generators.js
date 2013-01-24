@@ -177,6 +177,8 @@ function generateJavaFromTreeAa(selected, root) {
 	result += "\t\t\tvh = (ViewHolder)convertView.getTag();\n";
 	result += "\t\t}\n";
 	result += "\n";
+	result += "\t\t"+arrayType+" item = getItem( position );\n";
+	result += "\n";
 	result += "\t\t// Bind your data to the views here\n";
 	result += "\n";
 	if ( rootSelected ) {
