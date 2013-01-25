@@ -49,7 +49,7 @@ function generateJavaFromTreeMv(selected) {
 	var parentview = $("#edt_mv_parentview").val();
 	var parentview_dot = parentview == "" ? "" : parentview+".";
 	result += "\n";
-	result += "\tprivate void initializeViews() {\n";
+	result += "\tprivate void findViews() {\n";
 	for ( var i = 0; i < selected.length; i++ ) {
 		var node = selected[i];
 		result += "\t\t" + node.varName + " = (" + node.className + ")" + getFindViewCode( parentview_dot, node ) + ";\n";
@@ -70,7 +70,7 @@ function generateJavaFromTreeMv(selected) {
 	var parentview = $("#edt_mv_parentview").val();
 	var parentview_dot = parentview == "" ? "" : parentview+".";
 	result += "\n";
-	result += "\tprivate void initializeViews() {\n";
+	result += "\tprivate void findViews() {\n";
 	for ( var i = 0; i < selected.length; i++ ) {
 		var node = selected[i];
 		result += "\t\t" + node.varName + " = (" + node.className + ")" + getFindViewCode( parentview_dot, node ) + ";\n";
