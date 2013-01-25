@@ -55,28 +55,7 @@ function generateJavaFromTreeMv(selected) {
 		result += "\t\t" + node.varName + " = (" + node.className + ")" + getFindViewCode( parentview_dot, node ) + ";\n";
 	}
 	
-	result += "\t}";
-
-	return result;
-}
-
-function generateJavaFromTreeMv(selected) {
-	var result = "";
-	for ( var i = 0; i < selected.length; i++ ) {
-		var node = selected[i];
-		result += "\tprivate " + node.className + " " + node.varName + ";\n";
-	}
-	
-	var parentview = $("#edt_mv_parentview").val();
-	var parentview_dot = parentview == "" ? "" : parentview+".";
-	result += "\n";
-	result += "\tprivate void findViews() {\n";
-	for ( var i = 0; i < selected.length; i++ ) {
-		var node = selected[i];
-		result += "\t\t" + node.varName + " = (" + node.className + ")" + getFindViewCode( parentview_dot, node ) + ";\n";
-	}
-	
-	result += "\t}";
+	result += "\t}\n\n";
 
 	return result;
 }
@@ -113,7 +92,7 @@ function generateJavaFromTreeVh(selected, root) {
 		result += "\t\tthis." + node.varName + " = " + node.varName + ";\n";
 	}
 	
-	result += "\t}\n";
+	result += "\t}\n\n";
 	
 	var parentview;
 	if ( rootSelected ) {
@@ -147,7 +126,7 @@ function generateJavaFromTreeVh(selected, root) {
 	
 	result += "\t}\n";
 	
-	result += "}";
+	result += "}\n\n";
 	
 	return result;
 } 
@@ -201,7 +180,7 @@ function generateJavaFromTreeAa(selected, root) {
 	result += "\t\tthis.inflater = LayoutInflater.from( context );\n";
 	result += "\t}\n";
 	
-	result += "}";
+	result += "}\n\n";
 	
 	return result;
 } 
@@ -246,7 +225,7 @@ function generateJavaFromTreeCa(selected, root) {
 	result += "\t\tthis.inflater = LayoutInflater.from( context );\n";
 	result += "\t}\n";
 	
-	result += "}";
+	result += "}\n\n";
 	
 	return result;
 } 
@@ -271,6 +250,8 @@ function generateJavaFromTreeRg(selected) {
 			result += "private " + node.className + " " + node.varName + ";\n";
 		}
 	});
+	
+	result += "\n";
 
 	return result;
 }
