@@ -36,6 +36,8 @@ function generateJavaFromTree() {
 		result = generateJavaFromTreeRg(selected);
 	}
 	
+	result += "\n";
+	
 	$("#output").text( result );
 }
 
@@ -55,7 +57,7 @@ function generateJavaFromTreeMv(selected) {
 		result += "\t\t" + node.varName + " = (" + node.className + ")" + getFindViewCode( parentview_dot, node ) + ";\n";
 	}
 	
-	result += "\t}\n\n";
+	result += "\t}\n";
 
 	return result;
 }
@@ -101,7 +103,6 @@ function generateJavaFromTreeVh(selected, root) {
 		parentview = $("#edt_mv_parentview").val() != "" ? $("#edt_mv_parentview").val() : "rootView";
 	}
 	var parentview_dot = parentview == "" ? "" : parentview+".";
-	result += "\n";
 	result += "\tpublic static ViewHolder create("+root.className+" "+parentview+") {\n";
 	for ( var i = 0; i < selected.length; i++ ) {
 		var node = selected[i];
@@ -126,7 +127,7 @@ function generateJavaFromTreeVh(selected, root) {
 	
 	result += "\t}\n";
 	
-	result += "}\n\n";
+	result += "}\n";
 	
 	return result;
 } 
@@ -143,7 +144,6 @@ function generateJavaFromTreeAa(selected, root) {
 	
 	var result = "public class "+className+" extends ArrayAdapter<"+arrayType+"> {\n\n";
 	result += tabEachLine( generateJavaFromTreeVh(selected,root) ) + "\n";
-	result += "\n";
 
 	result += "\t@Override\n";
 	result += "\tpublic View getView(int position, View convertView, ViewGroup parent) {\n";
@@ -180,7 +180,7 @@ function generateJavaFromTreeAa(selected, root) {
 	result += "\t\tthis.inflater = LayoutInflater.from( context );\n";
 	result += "\t}\n";
 	
-	result += "}\n\n";
+	result += "}\n";
 	
 	return result;
 } 
@@ -194,7 +194,6 @@ function generateJavaFromTreeCa(selected, root) {
 	
 	var result = "public class "+className+" extends CursorAdapter {\n\n";
 	result += tabEachLine( generateJavaFromTreeVh(selected,root) ) + "\n";
-	result += "\n";
 
 	result += "\t@Override\n";
 	result += "\tpublic void bindView(View view, Context context, Cursor cursor) {\n";
@@ -225,7 +224,7 @@ function generateJavaFromTreeCa(selected, root) {
 	result += "\t\tthis.inflater = LayoutInflater.from( context );\n";
 	result += "\t}\n";
 	
-	result += "}\n\n";
+	result += "}\n";
 	
 	return result;
 } 
@@ -251,8 +250,6 @@ function generateJavaFromTreeRg(selected) {
 		}
 	});
 	
-	result += "\n";
-
 	return result;
 }
 
