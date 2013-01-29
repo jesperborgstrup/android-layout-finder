@@ -51,6 +51,7 @@ function generateJavaFromTreeMv(selected) {
 	var parentview = $("#edt_mv_parentview").val();
 	var parentview_dot = parentview == "" ? "" : parentview+".";
 	result += "\n";
+	result += getJavadocComment( 1, "Find the Views in the layout" ) + "\n";
 	result += "\tprivate void findViews() {\n";
 	for ( var i = 0; i < selected.length; i++ ) {
 		var node = selected[i];
@@ -63,7 +64,8 @@ function generateJavaFromTreeMv(selected) {
 }
 
 function generateJavaFromTreeVh(selected, root) {
-	var result = "private static class ViewHolder {\n";
+	var result = getJavadocComment( 0, "ViewHolder class for layout." ) + "\n";
+	result += "private static class ViewHolder {\n";
 	var rootSelected = selected.indexOf( root ) > -1;
 	
 	if ( !rootSelected ) {
@@ -272,6 +274,37 @@ function getClassName( node ) {
  	} else {
  		return node.className;
  	}
+}
+
+function getJavadocComment( tabs, text ) {
+	var result = "/**\n";
+	if ( text != "" ) {
+		result += " * " + text + "<br />\n";
+		result += " * <br />\n";
+	}
+	var date = new Date();
+	result += " * Auto-created on " + date.getFullYear() + "-" + zeropad( date.getMonth()+1, 2 ) + "-" + zeropad( date.getDate(), 2 ) + " " + zeropad( date.getHours(), 2 ) + ":" + zeropad( date.getMinutes(), 2 ) + ":" + zeropad( date.getSeconds(), 2 );
+	result += " by Android Layout Finder\n";
+	result += " * (http://www.buzzingandroid.com/tools/android-layout-finder)\n";
+	result += " */";
+	
+		
+	for ( var i = 0; i < tabs; i++ ) {
+		result = tabEachLine( result );
+	}
+	
+	return result;
+}
+
+function zeropad(number, length) {
+	   
+    var str = '' + number;
+    while (str.length < length) {
+        str = '0' + str;
+    }
+   
+    return str;
+
 }
 
 function getVariableName( node ) {
