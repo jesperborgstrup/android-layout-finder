@@ -100,7 +100,7 @@ function generateJavaFromTreeVh(selected, root) {
 	
 	var parentview;
 	if ( rootSelected ) {
-		parentview = root.id;
+		parentview = root.var_id;
 	} else {
 		parentview = $("#edt_mv_parentview").val() != "" ? $("#edt_mv_parentview").val() : "rootView";
 	}
@@ -163,7 +163,7 @@ function generateJavaFromTreeAa(selected, root) {
 	result += "\t\t// Bind your data to the views here\n";
 	result += "\n";
 	if ( rootSelected ) {
-		result += "\t\treturn vh."+root.id+";\n";
+		result += "\t\treturn vh."+root.var_id+";\n";
 	} else {
 		result += "\t\treturn vh.rootView;\n";
 	}
@@ -236,15 +236,15 @@ function generateJavaFromTreeRg(selected) {
 	var longestVar = 0;
 	var result = "";
 	$.each( selected, function(i,node) {
-		longestVar = Math.max( longestVar, node.id.length );
+		longestVar = Math.max( longestVar, node.var_id.length );
 	});
 	
 	$.each( selected, function(i,node) {
-		result += "\t@InjectView(R.id." + node.id + ") ";
+		result += "\t@InjectView(" + node.java_id + ") ";
 		if ( linebreak ) {
 			result += "\n\tprivate " + node.className + " " + node.varName + ";\n";
 		} else {
-			var padlength = longestVar - node.id.length;
+			var padlength = longestVar - node.var_id.length;
 			for ( var i = 0; i < padlength; i++ ) {
 				result += " ";
 			}
@@ -261,10 +261,10 @@ function tabEachLine( input ) {
 
 function getFindViewCode( parentview_dot, node ) {
 	if ( node.type == "view" ) {
-		return parentview_dot + "findViewById( R.id."+node.id+" )";
+		return parentview_dot + "findViewById( "+node.java_id+" )";
 	} else if ( node.type == "fragment") {
 		var fragmentMan = $("#chk_support").is(":checked") ? "getSupportFragmentManager()" : "getFragmentManager()";
-		return fragmentMan + ".findFragmentById( R.id."+node.id+" )";
+		return fragmentMan + ".findFragmentById( "+node.java_id+" )";
 	}
 }
 
@@ -310,7 +310,7 @@ function zeropad(number, length) {
 function getVariableName( node ) {
 	var camelcase = !$("#chk_dontcamelcase").is(":checked");
 	var prefix = $("#edt_varprefix").val(); 
-	var varName = node.id;
+	var varName = node.var_id;
 	
 	if ( camelcase ) {
 		varNameParts = varName.split( "_" );

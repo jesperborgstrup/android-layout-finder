@@ -65,7 +65,7 @@ function generateTreeFromInput() {
 		rootElement = recursiveParseXmlElement( root, 0 );
 	}
 	catch (err) {
-		$('#tree_alert').html('<div class="alert alert-error"><span>Error parsing XML</span></div>');
+		$('#tree_alert').html('<div class="alert alert-error"><span>Error parsing XML '+ err + '</span></div>');
 		$('#code_alert').html('<div class="alert alert-error"><span>Error parsing XML</span></div>');
 		$('#tree').html('');
 		$('#output').hide();
@@ -144,10 +144,15 @@ function recursiveParseXmlElement( xml_el ) {
  		className = xml_el.attr( "android:name" );
  		type = "fragment";
  	}
- 	var id = stripIdPrefix( xml_el.attr("android:id") );
+ 	var idString = xml_el.attr("android:id");
+ 	var var_id = getVarId( idString );
+	var show_id = getShowId( idString );
+	var java_id = getJavaId( idString );
  	return { "className": className,
  			 "type": type,
- 			 "id": id,
+ 			 "var_id": var_id,
+ 			 "show_id": show_id,
+			 "java_id": java_id,
  			 "children": children };
 }
 
@@ -157,14 +162,14 @@ function prepareForTree( el ) {
 		children[i] = prepareForTree( children[i] );
 	}
 	
- 	var hasId = typeof el['id'] != "undefined";
+ 	var hasId = typeof el['show_id'] != "undefined";
  	
  	var icon = images.indexOf( el['className'] ) > -1 ? el['className'] : "customView";
  	if ( el['className'] == "fragment" ) {
  		icon = "fragment";
  	}
  	if ( hasId ) {
- 		el[ "title" ] = el['id'] + " <i>" + el['className'] + "</i>";
+ 		el[ "title" ] = el['show_id'] + " <i>" + el['className'] + "</i>";
  	} else {
  		el[ "title" ] = "<span style='color: #A0A0A0'>(No id) <i>" + el['className'] + "</i></span>";
  		
@@ -173,17 +178,46 @@ function prepareForTree( el ) {
 	el[ "unselectable" ] = !hasId;
 	el[ "select" ] = hasId;
 
-	
 	return el;
 }
 
-function stripIdPrefix( idString ) {
+function getVarId( idString ) {
 	if ( typeof idString == 'undefined' ) {
 		return undefined;
 	}
 	
 	if ( idString.charAt( 0 ) == "@" ) {
 		return idString.substring( idString.indexOf( "/", 0 ) + 1, idString.length );
+	}
+	return idString;
+}
+
+function getShowId( idString ) {
+	if ( typeof idString == 'undefined' ) {
+		return undefined;
+	}
+	
+	if ( idString.charAt( 0 ) == "@" ) {
+		var result = idString.substring( idString.indexOf( "/", 0 ) + 1, idString.length );
+		if ( idString.substring( 1, 11 ) == "android:id" ) {
+			result = "android:" + result;
+		}
+		return result;
+	}
+	return idString;
+}
+
+function getJavaId( idString ) {
+	if ( typeof idString == 'undefined' ) {
+		return 0;
+	}
+	
+	if ( idString.charAt( 0 ) == "@" ) {
+		var result = "R.id." + idString.substring( idString.indexOf( "/", 0 ) + 1, idString.length );
+		if ( idString.substring( 1, 11 ) == "android:id" ) {
+			result = "android." + result;
+		}
+		return result;
 	}
 	return idString;
 }
