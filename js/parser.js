@@ -24,6 +24,8 @@ function sampleData() {
 
 function showOptions() {
 	$("#setting_mv_parentview").hide();
+	$("#setting_vh_classname").hide();
+	$("#setting_vh_visibility").hide();
 	$("#setting_aa_classname").hide();
 	$("#setting_aa_arraytype").hide();
 	$("#setting_ca_classname").hide();
@@ -34,6 +36,8 @@ function showOptions() {
 		// Member variables
 		$("#setting_mv_parentview").show();
 	} else if ( $("#radio_codetype_vh").is(":checked") ) {
+		$("#setting_vh_classname").show();
+		$("#setting_vh_visibility").show();
 		// ViewHolder pattern
 	} else if ( $("#radio_codetype_aa").is(":checked") ) {
 		// ArrayAdapter with ViewHolder
@@ -290,11 +294,14 @@ $(document).ready(function() {
 	$("#chk_support, #chk_includepackage, #chk_dontcamelcase, #chk_rg_linebreak").change(function() {
 		generateJavaFromTree();
 	});
-	$("#edt_varprefix, #edt_mv_parentview, #edt_aa_classname, #edt_aa_arraytype, #edt_ca_classname, #edt_layoutres").bind("keyup paste", function(e){
+	$("#edt_varprefix, #edt_mv_parentview, #edt_vh_classname, #edt_aa_classname, #edt_aa_arraytype, #edt_ca_classname, #edt_layoutres").bind("keyup paste", function(e){
 		generateJavaFromTree();
 	});
 	$("#radio_codetype_mv, #radio_codetype_vh, #radio_codetype_aa, #radio_codetype_ca, #radio_codetype_rg").change(function() {
 		showOptions();
+		generateJavaFromTree();
+	});
+	$("#radio_vh_visibility_private, #radio_vh_visibility_default, #radio_vh_visibility_protected, #radio_vh_visibility_public").change(function() {
 		generateJavaFromTree();
 	});
 //	$(document).on('dragenter',function(event){

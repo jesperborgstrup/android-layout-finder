@@ -64,9 +64,39 @@ function generateJavaFromTreeMv(selected) {
 }
 
 function generateJavaFromTreeVh(selected, root) {
-	var result = getJavadocComment( 0, "ViewHolder class for layout." ) + "\n";
-	result += "private static class ViewHolder {\n";
-	var rootSelected = selected.indexOf( root ) > -1;
+	// Only use custom class name if ViewHolder code type is selected
+	var className = "ViewHolder";
+	if ( $("#radio_codetype_vh").is(":checked") ) {
+		var typedClassName = $("#edt_vh_classname").val();
+		if ( typedClassName != "" ) {
+			className = typedClassName;
+		}
+	}
+	
+	var visibility = "";
+	if ( $( "#radio_vh_visibility_private" ).is(":checked") ) {
+		visibility = "private ";
+	} else if ( $( "#radio_vh_visibility_protected" ).is(":checked") ) {
+		visibility = "protected ";
+	} else if ( $( "#radio_vh_visibility_public" ).is(":checked") ) {
+		visibility = "public ";
+	}
+	
+	console.log( "HERE" );
+	console.log( root );
+	console.log( selected );
+	
+	var result = getJavadocComment( 0, className + " class for layout."  ) + "\n";
+	result += visibility + "static class "+className+" {\n";
+	
+	// Find out if root is selected
+	var rootSelected = false;
+	for ( var i = 0; i < selected.length; i++ ) {
+		if ( selected[i].key == root.key ) {
+			rootSelected = true;
+			break;
+		}
+	}
 	
 	if ( !rootSelected ) {
 		result += "\tpublic final "+ root.className +" rootView;\n";
@@ -76,7 +106,7 @@ function generateJavaFromTreeVh(selected, root) {
 		result += "\tpublic final " + node.className + " " + node.varName + ";\n";
 	}
 	result += "\n";
-	result += "\tprivate ViewHolder(";
+	result += "\tprivate "+className+"(";
 	if ( !rootSelected ) {
 		result += root.className + " rootView, ";
 	}
@@ -105,16 +135,16 @@ function generateJavaFromTreeVh(selected, root) {
 		parentview = $("#edt_mv_parentview").val() != "" ? $("#edt_mv_parentview").val() : "rootView";
 	}
 	var parentview_dot = parentview == "" ? "" : parentview+".";
-	result += "\tpublic static ViewHolder create("+root.className+" "+parentview+") {\n";
+	result += "\tpublic static "+className+" create("+root.className+" "+parentview+") {\n";
 	for ( var i = 0; i < selected.length; i++ ) {
 		var node = selected[i];
-		if ( node == root ) {
+		if ( node.key == root.key ) {
 			continue;
 		}
 		result += "\t\t" + node.className + " " + node.varName + " = (" + node.className + ")" + getFindViewCode( parentview_dot, node ) + ";\n";
 	}		
 	
-	result += "\t\treturn new ViewHolder( ";
+	result += "\t\treturn new "+className+"( ";
 	if ( !rootSelected ) {
 		result += parentview + ", ";
 	}
