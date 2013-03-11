@@ -47,12 +47,18 @@ function generateJavaFromTreeMv(selected) {
 		var node = selected[i];
 		result += "\tprivate " + node.className + " " + node.varName + ";\n";
 	}
-	
+
+	var parentviewparam = $("#chk_mv_parentviewparam").is(":checked");
 	var parentview = $("#edt_mv_parentview").val();
+	var func_params = "";
+	if ( parentviewparam ) {
+		parentview = parentview == "" ? "rootView" : parentview;
+		func_params = "View " + parentview;
+	}
 	var parentview_dot = parentview == "" ? "" : parentview+".";
 	result += "\n";
 	result += getJavadocComment( 1, "Find the Views in the layout" ) + "\n";
-	result += "\tprivate void findViews() {\n";
+	result += "\tprivate void findViews("+func_params+") {\n";
 	for ( var i = 0; i < selected.length; i++ ) {
 		var node = selected[i];
 		result += "\t\t" + node.varName + " = (" + node.className + ")" + getFindViewCode( parentview_dot, node ) + ";\n";

@@ -23,6 +23,7 @@ function sampleData() {
 }
 
 function showOptions() {
+	$("#setting_mv_parentviewparam").hide();
 	$("#setting_mv_parentview").hide();
 	$("#setting_vh_classname").hide();
 	$("#setting_vh_visibility").hide();
@@ -34,6 +35,7 @@ function showOptions() {
 	
 	if ( $("#radio_codetype_mv").is(":checked") ) {
 		// Member variables
+		$("#setting_mv_parentviewparam").show();
 		$("#setting_mv_parentview").show();
 	} else if ( $("#radio_codetype_vh").is(":checked") ) {
 		$("#setting_vh_classname").show();
@@ -291,7 +293,7 @@ $(document).ready(function() {
 	$("#help_mv_parentview").css('cursor','pointer').click(function() {
 		alert("Enter a Java variable name here to redirect all findViewById() method calls to that variable.");
 	});
-	$("#chk_support, #chk_includepackage, #chk_dontcamelcase, #chk_rg_linebreak").change(function() {
+	$("#chk_support, #chk_includepackage, #chk_dontcamelcase, #chk_rg_linebreak, #chk_mv_parentviewparam").change(function() {
 		generateJavaFromTree();
 	});
 	$("#edt_varprefix, #edt_mv_parentview, #edt_vh_classname, #edt_aa_classname, #edt_aa_arraytype, #edt_ca_classname, #edt_layoutres").bind("keyup paste", function(e){
