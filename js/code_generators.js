@@ -50,6 +50,8 @@ function generateJavaFromTreeMv(selected) {
 
 	var parentviewparam = $("#chk_mv_parentviewparam").is(":checked");
 	var parentview = $("#edt_mv_parentview").val();
+	var clicklisteners = $("#chk_mv_clicklisteners").is(":checked");
+	var buttons = [];
 	var func_params = "";
 	if ( parentviewparam ) {
 		parentview = parentview == "" ? "rootView" : parentview;
@@ -62,9 +64,42 @@ function generateJavaFromTreeMv(selected) {
 	for ( var i = 0; i < selected.length; i++ ) {
 		var node = selected[i];
 		result += "\t\t" + node.varName + " = (" + node.className + ")" + getFindViewCode( parentview_dot, node ) + ";\n";
+		// http://stackoverflow.com/a/2548133
+		if ( node.className.indexOf( "Button", node.className.length-6 ) !== -1 ) {
+			buttons.push( node );
+		}
+	}
+	
+	if ( clicklisteners && buttons.length > 0 ) {
+		result += "\n";
+		for ( var i = 0; i < buttons.length; i++ ) {
+			var btn = buttons[i];
+			result += "\t\t" + btn.varName + ".setOnClickListener( this );\n";
+		}
 	}
 	
 	result += "\t}\n";
+	
+	if ( clicklisteners && buttons.length > 0 ) {
+		result += "\n";
+		result += getJavadocComment( 1, "Handle button click events" ) + "\n";
+		result += "\t@Override\n";
+		result += "\tpublic void onClick(View v) {\n";
+		for ( var i = 0; i < buttons.length; i++ ) {
+			var btn = buttons[i];
+			if ( i == 0 ) {
+				result += "\t\t";
+			} else {
+				result += " else ";
+			}
+			result += "if ( v == " + btn.varName + " ) {\n";
+			result += "\t\t\t// Handle clicks for " + btn.varName + "\n";
+			result += "\t\t}";
+		}
+		result += "\n\t}\n";
+	}
+	
+
 
 	return result;
 }
