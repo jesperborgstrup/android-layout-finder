@@ -130,27 +130,15 @@ function generateJavaFromTreeVh(selected, root) {
 	var result = getJavadocComment( 0, className + " class for layout."  ) + "\n";
 	result += visibility + "static class "+className+" {\n";
 	
-	// Find out if root is selected
-	var rootSelected = false;
-	for ( var i = 0; i < selected.length; i++ ) {
-		if ( selected[i].key == root.key ) {
-			rootSelected = true;
-			break;
-		}
-	}
-	
-	if ( !rootSelected ) {
-		result += "\tpublic final "+ root.className +" rootView;\n";
-	}
 	for ( var i = 0; i < selected.length; i++ ) {
 		var node = selected[i];
 		result += "\tpublic final " + node.className + " " + node.varName + ";\n";
 	}
 	result += "\n";
-	result += "\tprivate "+className+"(";
-	if ( !rootSelected ) {
-		result += root.className + " rootView, ";
-	}
+	result += "\t" + visibility + className+"(";
+//	if ( !rootSelected ) {
+//		result += root.className + " rootView, ";
+//	}
 	for ( var i = 0; i < selected.length; i++ ) {
 		var node = selected[i];
 		result += node.className + " " + node.varName;
@@ -159,9 +147,6 @@ function generateJavaFromTreeVh(selected, root) {
 		}
 	}
 	result += ") {\n";
-	if ( !rootSelected ) {
-		result += "\t\tthis.rootView = rootView;\n";
-	}
 	for ( var i = 0; i < selected.length; i++ ) {
 		var node = selected[i];
 		result += "\t\tthis." + node.varName + " = " + node.varName + ";\n";
@@ -169,26 +154,20 @@ function generateJavaFromTreeVh(selected, root) {
 	
 	result += "\t}\n\n";
 	
-	var parentview;
-	if ( rootSelected ) {
-		parentview = root.var_id;
-	} else {
-		parentview = $("#edt_mv_parentview").val() != "" ? $("#edt_mv_parentview").val() : "rootView";
-	}
-	var parentview_dot = parentview == "" ? "" : parentview+".";
-	result += "\tpublic static "+className+" create("+root.className+" "+parentview+") {\n";
+	var parentview_dot = root.var_id == "" ? "" : root.var_id+".";
+	result += "\tpublic static "+className+" create("+root.className+" "+root.var_id+") {\n";
 	for ( var i = 0; i < selected.length; i++ ) {
 		var node = selected[i];
-		if ( node.key == root.key ) {
+		if ( node["is_root"] ) {
 			continue;
 		}
 		result += "\t\t" + node.className + " " + node.varName + " = (" + node.className + ")" + getFindViewCode( parentview_dot, node ) + ";\n";
 	}		
 	
 	result += "\t\treturn new "+className+"( ";
-	if ( !rootSelected ) {
-		result += parentview + ", ";
-	}
+//	if ( !rootSelected ) {
+//		result += parentview + ", ";
+//	}
 	for ( var i = 0; i < selected.length; i++ ) {
 		var node = selected[i];
 		result += node.varName;

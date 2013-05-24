@@ -40,9 +40,9 @@ function showOptions() {
 		$("#setting_mv_parentview").show();
 		$("#setting_mv_clicklisteners").show();
 	} else if ( $("#radio_codetype_vh").is(":checked") ) {
+		// ViewHolder pattern
 		$("#setting_vh_classname").show();
 		$("#setting_vh_visibility").show();
-		// ViewHolder pattern
 	} else if ( $("#radio_codetype_aa").is(":checked") ) {
 		// ArrayAdapter with ViewHolder
 		$("#setting_aa_classname").show();
@@ -71,6 +71,7 @@ function generateTreeFromInput() {
 			return;
 		}
 		rootElement = recursiveParseXmlElement( root, 0 );
+		rootElement["is_root"] = true;
 	}
 	catch (err) {
 		$('#tree_alert').html('<div class="alert alert-error"><span>Error parsing XML '+ err + '</span></div>');
@@ -85,8 +86,14 @@ function generateTreeFromInput() {
 	$('#code_alert').html('');
 	$('#tree').removeAttr('disabled');
 	$('#output').show();
+	
+	if ( typeof( rootElement["var_id"] ) == "undefined" ) {
+		rootElement["show_id"] = "rootView";
+		rootElement["var_id"] = "rootView";
+	}
 
 	var tree = prepareForTree( rootElement );
+	rootElement["select"] = false;
 	
 	$("#tree").dynatree({
 		minExpandLevel: 1000,
