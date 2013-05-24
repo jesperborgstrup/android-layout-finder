@@ -31,6 +31,7 @@ function showOptions() {
 	$("#setting_aa_classname").hide();
 	$("#setting_aa_arraytype").hide();
 	$("#setting_ca_classname").hide();
+	$("#setting_ca_constructors").hide();
 	$("#setting_rg_linebreak").hide();
 	$("#setting_layoutres").hide();
 	
@@ -52,6 +53,7 @@ function showOptions() {
 		// CursorAdapter with ViewHolder
 		$("#setting_ca_classname").show();
 		$("#setting_layoutres").show();
+		$("#setting_ca_constructors").show();
 	} else if ( $("#radio_codetype_rg").is(":checked") ) {
 		$("#setting_rg_linebreak").show();
 	}
@@ -313,6 +315,9 @@ $(document).ready(function() {
 		generateJavaFromTree();
 	});
 	$("#radio_vh_visibility_private, #radio_vh_visibility_default, #radio_vh_visibility_protected, #radio_vh_visibility_public").change(function() {
+		generateJavaFromTree();
+	});
+	$("#radio_ca_constructors_simple, #radio_ca_constructors_default, #radio_ca_constructors_all").change(function() {
 		generateJavaFromTree();
 	});
 //	$(document).on('dragenter',function(event){

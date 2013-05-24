@@ -201,7 +201,7 @@ function generateJavaFromTreeAa(selected, root) {
 	result += "\tpublic View getView(int position, View convertView, ViewGroup parent) {\n";
 	result += "\t\tfinal ViewHolder vh;\n";
 	result += "\t\tif ( convertView == null ) {\n";
-	result += "\t\t\tView view = inflater.inflate( R.layout."+layoutRes+", parent, false );\n";
+	result += "\t\t\tView view = mInflater.inflate( R.layout."+layoutRes+", parent, false );\n";
 	result += "\t\t\tvh = ViewHolder.create( ("+root.className+")view );\n";
 	result += "\t\t\tview.setTag( vh );\n";
 	result += "\t\t} else {\n";
@@ -210,7 +210,7 @@ function generateJavaFromTreeAa(selected, root) {
 	result += "\n";
 	result += "\t\t"+arrayType+" item = getItem( position );\n";
 	result += "\n";
-	result += "\t\t// Bind your data to the views here\n";
+	result += "\t\t// TODOBind your data to the views here\n";
 	result += "\n";
 	if ( rootSelected ) {
 		result += "\t\treturn vh."+root.var_id+";\n";
@@ -220,16 +220,16 @@ function generateJavaFromTreeAa(selected, root) {
 	result += "\t}\n";
 	
 	result += "\n";
-	result += "\tprivate LayoutInflater inflater;\n";
+	result += "\tprivate LayoutInflater mInflater;\n";
 	result += "\n";
 	result += "\t// Constructors\n";
 	result += "\tpublic "+className+"(Context context, List<"+arrayType+"> objects) {\n";
 	result += "\t\tsuper(context, 0, objects);\n";
-	result += "\t\tthis.inflater = LayoutInflater.from( context );\n";
+	result += "\t\tthis.mInflater = LayoutInflater.from( context );\n";
 	result += "\t}\n";
 	result += "\tpublic "+className+"(Context context, "+arrayType+"[] objects) {\n";
 	result += "\t\tsuper(context, 0, objects);\n";
-	result += "\t\tthis.inflater = LayoutInflater.from( context );\n";
+	result += "\t\tthis.mInflater = LayoutInflater.from( context );\n";
 	result += "\t}\n";
 	
 	result += "}\n";
@@ -249,32 +249,49 @@ function generateJavaFromTreeCa(selected, root) {
 
 	result += "\t@Override\n";
 	result += "\tpublic void bindView(View view, Context context, Cursor cursor) {\n";
-	result += "\t\tViewHolder vh = (ViewHolder)view.getTag();\n";
+	result += "\t\tfinal ViewHolder vh = (ViewHolder)view.getTag();\n";
 	result += "\n";
-	result += "\t\t// Bind your data to the views here\n";
+	result += "\t\t// TODO Bind your data to the views here\n";
 	result += "\t}";
 	result += "\n";
 	
 	result += "\t@Override\n";
 	result += "\tpublic View newView(Context context, Cursor cursor, ViewGroup parent) {\n";
-	result += "\t\tView view = inflater.inflate( R.layout."+layoutRes+", parent, false );\n";
+	result += "\t\tView view = mInflater.inflate( R.layout."+layoutRes+", parent, false );\n";
 	result += "\t\tview.setTag( ViewHolder.create( ("+root.className+")view ) );\n";
 	result += "\t\treturn view;\n";
 	result += "\t}";
 	result += "\n";
 	
 	result += "\n";
-	result += "\tprivate LayoutInflater inflater;\n";
+	result += "\tprivate LayoutInflater mInflater;\n";
 	result += "\n";
 	result += "\t// Constructors\n";
-	result += "\tpublic "+className+"(Context context, Cursor c, boolean autoRequery) {\n";
-	result += "\t\tsuper(context, c, autoRequery);\n";
-	result += "\t\tthis.inflater = LayoutInflater.from( context );\n";
-	result += "\t}\n";
-	result += "\tpublic "+className+"(Context context, Cursor c, int flags) {\n";
-	result += "\t\tsuper(context, c, flags);\n";
-	result += "\t\tthis.inflater = LayoutInflater.from( context );\n";
-	result += "\t}\n";
+	
+	var constructors_simple = $("#radio_ca_constructors_simple").is(":checked");
+	var constructors_default = $("#radio_ca_constructors_default").is(":checked");
+	var constructors_all = $("#radio_ca_constructors_all").is(":checked");
+	
+	if ( constructors_simple || constructors_all ) {
+		result += "\tpublic "+className+"(Context context) {\n";
+		result += "\t\tsuper(context, null, true);\n";
+		result += "\t\tthis.mInflater = LayoutInflater.from( context );\n";
+		result += "\t}\n";
+		result += "\tpublic "+className+"(Context context, Cursor c) {\n";
+		result += "\t\tsuper(context, c, true);\n";
+		result += "\t\tthis.mInflater = LayoutInflater.from( context );\n";
+		result += "\t}\n";
+	}
+	if ( constructors_default || constructors_all ) {
+		result += "\tpublic "+className+"(Context context, Cursor c, boolean autoRequery) {\n";
+		result += "\t\tsuper(context, c, autoRequery);\n";
+		result += "\t\tthis.mInflater = LayoutInflater.from( context );\n";
+		result += "\t}\n";
+		result += "\tpublic "+className+"(Context context, Cursor c, int flags) {\n";
+		result += "\t\tsuper(context, c, flags);\n";
+		result += "\t\tthis.mInflater = LayoutInflater.from( context );\n";
+		result += "\t}\n";
+	}
 	
 	result += "}\n";
 	
