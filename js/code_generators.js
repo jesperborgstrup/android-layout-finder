@@ -104,7 +104,7 @@ function generateJavaFromTreeMv(selected) {
 	return result;
 }
 
-function generateJavaFromTreeVh(selected, root) {
+function generateJavaFromTreeVh(selected, root, forceRoot) {
 	// Only use custom class name if ViewHolder code type is selected
 	var className = "ViewHolder";
 	if ( $("#radio_codetype_vh").is(":checked") ) {
@@ -129,6 +129,25 @@ function generateJavaFromTreeVh(selected, root) {
 	
 	var result = getJavadocComment( 0, className + " class for layout."  ) + "\n";
 	result += visibility + "static class "+className+" {\n";
+
+	if ( forceRoot ) {
+		var rootSelected = false;
+		for ( var i = 0; i < selected.length; i++ ) {
+			if ( selected[i].key == root.key ) {
+				rootSelected = true;
+				break;
+			}
+		}
+		if ( !rootSelected ) {
+			// http://stackoverflow.com/a/586189
+			selected.splice( 0, 0, root );
+			if ( typeof( root.varName ) == "undefined" && typeof( root.var_id ) != "undefined" ) {
+				root.varName = root.var_id;
+			}
+			console.log( "VARNAME" );
+			console.log( root.varName );
+		}
+	}
 	
 	for ( var i = 0; i < selected.length; i++ ) {
 		var node = selected[i];
@@ -195,7 +214,7 @@ function generateJavaFromTreeAa(selected, root) {
 	var rootSelected = selected.indexOf( root ) > -1;
 	
 	var result = "public class "+className+" extends ArrayAdapter<"+arrayType+"> {\n\n";
-	result += tabEachLine( generateJavaFromTreeVh(selected,root) ) + "\n";
+	result += tabEachLine( generateJavaFromTreeVh(selected,root,true) ) + "\n";
 
 	result += "\t@Override\n";
 	result += "\tpublic View getView(int position, View convertView, ViewGroup parent) {\n";
