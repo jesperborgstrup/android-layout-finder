@@ -301,13 +301,16 @@ $(document).ready(function() {
 	$("#help_support").css('cursor','pointer').click(function() {
 		alert("If this is checked, the FragmentManager is retrieved with getSupportFragmentManager() instead of getFragmentManager().");
 	});
+	$("#help_removeidprefix").css('cursor','pointer').click(function() {
+		alert("If you prefix your ID's in your XML-file, and don't want that prefix to be part of the variable name, enter the prefix.")
+	});
 	$("#help_mv_parentview").css('cursor','pointer').click(function() {
 		alert("Enter a Java variable name here to redirect all findViewById() method calls to that variable.");
 	});
 	$("#chk_support, #chk_includepackage, #chk_dontcamelcase, #chk_rg_linebreak, #chk_mv_parentviewparam, #chk_mv_clicklisteners").change(function() {
 		generateJavaFromTree();
 	});
-	$("#edt_varprefix, #edt_mv_parentview, #edt_vh_classname, #edt_aa_classname, #edt_aa_arraytype, #edt_ca_classname, #edt_layoutres").bind("keyup paste", function(e){
+	$("#edt_removeidprefix, #edt_varprefix, #edt_mv_parentview, #edt_vh_classname, #edt_aa_classname, #edt_aa_arraytype, #edt_ca_classname, #edt_layoutres").bind("keyup paste", function(e){
 		generateJavaFromTree();
 	});
 	$("#radio_codetype_mv, #radio_codetype_vh, #radio_codetype_aa, #radio_codetype_ca, #radio_codetype_rg").change(function() {

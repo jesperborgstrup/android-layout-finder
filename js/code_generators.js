@@ -395,8 +395,13 @@ function zeropad(number, length) {
 
 function getVariableName( node ) {
 	var camelcase = !$("#chk_dontcamelcase").is(":checked");
+	var removeidprefix = $("#edt_removeidprefix").val();
 	var prefix = $("#edt_varprefix").val(); 
 	var varName = node.var_id;
+
+	if ( removeidprefix != "" && varName.indexOf( removeidprefix ) == 0 ) {
+		varName = varName.substring( removeidprefix.length, varName.length )
+	}
 	
 	if ( camelcase ) {
 		varNameParts = varName.split( "_" );
